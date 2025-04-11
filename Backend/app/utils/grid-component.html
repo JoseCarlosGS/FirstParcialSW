@@ -1,0 +1,6 @@
+<div class="grid-component" [id]="'component-' + data.id" [ngStyle]="gridStyles">
+    <app-dynamic-component 
+      *ngFor="let child of data.children" 
+      [componentData]="child">
+    </app-dynamic-component>
+  </div>
