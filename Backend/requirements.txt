@@ -6,3 +6,4 @@ sqlalchemy
 jinja2
 python-multipart
 aiofiles
+websockets

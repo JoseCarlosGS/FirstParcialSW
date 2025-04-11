@@ -13,7 +13,7 @@ class GenerateByComand():
     def execute(self, project_name: str, config : ProjectConfig , component_type: str, output_dir: str) -> None:
         """Ejecuta la generación de un componente en el directorio especificado."""
         # Lógica para ejecutar la generación de componentes
-        project_name = project_name.strip()
+        project_name = config.project_name.strip()
         if not project_name:
             raise HTTPException(status_code=400, detail="El nombre del proyecto no puede estar vacío.")
         

@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from .database import init_db
 from .routes import user_routes
 from .routes import project_routes
+from .routes import socket_routes
 from .routes.project_routes import generator
 
 app = FastAPI(title="Angular Project Generator API")
@@ -11,7 +12,8 @@ def on_startup():
     init_db()
     
 app.include_router( user_routes.router, prefix="/api")
-app.include_router( project_routes.router, prefix="/api")    
+app.include_router( project_routes.router, prefix="/api")  
+app.include_router(socket_routes.router, prefix="/api")  
 
 @app.websocket("/ws/project/{project_id}")
 async def project_status_websocket(websocket: WebSocket, project_id: str):
