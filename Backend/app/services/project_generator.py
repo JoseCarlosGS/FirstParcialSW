@@ -7,23 +7,31 @@ from fastapi import HTTPException, Response
 from ..schemas.proyect_schemas import ProjectSchema
 from ..services.template_engine import TemplateEngine
 from ..services.component_generator import ComponentGenerator
-from ..services.strategies.generate_strategies import GenerateByComand
+from ..services.strategies.generate_strategies import GenerateProjectStrategy, GenerateByCommand
+from ..services.strategies.generate_code import DefaultCodeGenerationStrategy
 from ..models.project import ProjectConfig
 
 class AngularProjectGenerator:
     def __init__(self):
-        self.strategy = GenerateByComand()
+        self.strategy = None
         self.template_engine = TemplateEngine()
         self.component_generator = ComponentGenerator()
         self.projects_dir = os.path.join(os.getcwd(), "generated_projects")
         os.makedirs(self.projects_dir, exist_ok=True)
         
+    def set_strategy(self, strategy):
+        self.strategy = strategy
+        
+    def execute_strategy(self, *args, **kwargs):
+        if self.strategy is None:
+            raise ValueError("Strategy not set")
+        return self.strategy.execute(*args, **kwargs)
+        
     def generate_project(self, config: ProjectConfig, project_schema: ProjectSchema = None, ) -> str:
         """Genera un proyecto Angular completo basado en el esquema y devuelve la ruta al zip"""
         # Crear directorio temporal para el proyecto
-        
-        return self.strategy.execute(project_name="hola-mundo", config= config, component_type="text", output_dir=self.projects_dir)
-        
+        self.set_strategy(GenerateByCommand())
+        return self.execute_strategy(project_name="hola-mundo", config= config, component_type="text", output_dir=self.projects_dir)
         # project_id = str(uuid.uuid4())
         # project_dir = os.path.join(self.projects_dir, project_id)
         # os.makedirs(project_dir)
@@ -49,6 +57,11 @@ class AngularProjectGenerator:
         #     # Limpiar en caso de error
         #     shutil.rmtree(project_dir, ignore_errors=True)
         #     raise HTTPException(status_code=500, detail=f"Error generando proyecto: {str(e)}")
+    
+    def generate_component(self, prompt:str, project_schema: ProjectSchema = None, component_type: str= None):
+        """Genera un componente Angular basado en el esquema y devuelve la ruta al zip"""
+        self.set_strategy(DefaultCodeGenerationStrategy())
+        return self.execute_strategy(prompt=prompt)
     
     def _generate_base_structure(self, project_dir: str, project_schema: ProjectSchema):
         """Genera la estructura base de un proyecto Angular"""

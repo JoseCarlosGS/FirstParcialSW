@@ -16,6 +16,7 @@ instance/
 *.db
 *.sqlite3
 temp-projects/
+temp-components/
 
 # Logs
 *.log

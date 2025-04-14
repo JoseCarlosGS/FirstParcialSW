@@ -15,6 +15,10 @@ router = APIRouter(prefix="/project", tags=["projects"])
 
 generator = AngularProjectGenerator()
 
+def borrar_archivo(path: str):
+    if os.path.exists(path):
+        os.remove(path)
+
 @router.get("/")
 async def get_all():
     pass
@@ -48,10 +52,22 @@ async def generate_angular_project(project: ProjectConfig, background_tasks: Bac
     """
     project_id = str(uuid.uuid4())
     resp = generator.generate_project(project, project_id)
-    zip_path = resp["zip_path"]
-    zip_filename = resp["zip_filename"]
+    zip_path = resp.get("zip_path")
+    zip_filename = resp.get("zip_filename")
+    background_tasks.add_task(borrar_archivo, zip_path)
     #background_tasks.add_task(generator.generate_project, project)
     return FileResponse(zip_path, media_type="application/zip", filename=zip_filename)
+
+@router.post("/component")
+async def generate_component(prompt: str, background_tasks: BackgroundTasks):
+    """
+    Genera un componente Angular basado en el esquema proporcionado.
+    Devuelve un token para descargar el componente más tarde.
+    """
+    project_id = str(uuid.uuid4())
+    zip_path = generator.generate_component(prompt=prompt)
+    background_tasks.add_task(borrar_archivo, zip_path)
+    return FileResponse(path=zip_path, filename="registro_usuario.zip", media_type='application/zip')
 
 @router.get("/download/{project_id}")
 async def download_project(project_id: str):
