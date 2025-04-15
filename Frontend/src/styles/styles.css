@@ -1,0 +1,62 @@
+* {
+    user-select: none;
+}
+
+.react-colorful__saturation-pointer {
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 0 !important;
+}
+
+.react-colorful__hue {
+    height: 20px !important;
+    margin-top: 0.5rem;
+    border-radius: 0 !important;
+}
+
+.react-colorful__pointer .react-colorful__hue-pointer {
+    width: 20px;
+    height: 20px;
+    border-radius: 0 !important;
+}
+
+
+.react-colorful__hue .react-colorful__hue-pointer {
+    width: 20px;
+    height: 20px;
+    border-radius: 0 !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.react-player video {
+    max-height: 740px;
+}
+
+/* Estilos para las barras de desplazamiento */
+.layerhub-canvas-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  }
+  
+  .layerhub-canvas-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .layerhub-canvas-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .layerhub-canvas-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
