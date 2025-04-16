@@ -58,7 +58,7 @@ const PanelListItem = ({ label, icon, activePanel, name }: any) => {
         flexDirection: "column",
         justifyContent: "center",
         fontFamily: "Roboto, sans-serif",
-        fontWeight: 500,
+        fontWeight: 600,
         fontSize: "0.8rem",
         userSelect: "none",
         transition: "all 0.5s",
