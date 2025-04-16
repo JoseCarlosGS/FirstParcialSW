@@ -259,7 +259,6 @@ const Text = () => {
                             padding: '8px',
                             fontSize: '14px',
                             lineHeight: '1.4',
-                            resize: 'vertical', // Permite al usuario ajustar la altura
                             minHeight: '60px',
                             '::placeholder': {
                               color: '#AAAAAA'

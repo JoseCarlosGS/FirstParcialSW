@@ -713,6 +713,36 @@ export const graphics = [
     "preview": "https://ik.imagekit.io/cezllypgi/8ZZfeV01.svg?updatedAt=1744289857413",
     "id": "EscarapelaDecorativa"
   },
+  {
+    "left": 150,
+    "top": 180,
+    "width": 200,
+    "height": 60,
+    "originX": "left",
+    "originY": "top",
+    "scaleX": 1,
+    "scaleY": 1,
+    "type": "StaticPath",
+    "path": [
+      ["M", 10, 0],
+      ["L", 190, 0],
+      ["C", 195.523, 0, 200, 4.477, 200, 10],
+      ["L", 200, 50],
+      ["C", 200, 55.523, 195.523, 60, 190, 60],
+      ["L", 10, 60],
+      ["C", 4.477, 60, 0, 55.523, 0, 50],
+      ["L", 0, 10],
+      ["C", 0, 4.477, 4.477, 0, 10, 0],
+      ["z"]
+    ],
+    "fill": "#4A90E2",
+    "metadata": {
+      "label": "Botón"
+    },
+    "preview": "https://th.bing.com/th/id/R.90dc449b3316308f78aecee372878168?rik=yMnyoiC3C4ZT9Q&pid=ImgRaw&r=0",
+    "id": "custom_button_shape"
+  }
+  
 ]
 
 export const vectors = [
