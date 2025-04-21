@@ -4,7 +4,7 @@ import { Editor as GrapesEditor } from 'grapesjs';
 import io from 'socket.io-client';
 import 'grapesjs/dist/css/grapes.min.css';
 import { customBlocks } from '../../../constants/CustomBlocks';
-import Navbar from './Navbar';
+import Navbar from '../../componets/Navbar';
 import { useEditor } from '../../../contexts/AppContext';
 import { AppContext } from '../../../contexts/AppContext';
 
