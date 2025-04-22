@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, PlusCircle, LogOut, User, Settings } from 'lucide-react';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const navigate = useNavigate();
   
   // Datos de ejemplo para los proyectos
   const proyectos = [
@@ -67,10 +69,13 @@ const Home = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-800">Mis Proyectos</h1>
-          <button className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">
+            <button 
+            className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
+            onClick={() => navigate('/editor')}
+            >
             <PlusCircle size={20} className="mr-2" />
             Nuevo Proyecto
-          </button>
+            </button>
         </div>
         
         {/* Slider de Proyectos */}
