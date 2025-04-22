@@ -7,6 +7,7 @@ import { customBlocks } from '../../../constants/CustomBlocks';
 import Navbar from '../../componets/Navbar';
 import { useEditor } from '../../../contexts/AppContext';
 import { AppContext } from '../../../contexts/AppContext';
+import ChatPanel from './ChatPanel';
 
 // Tipo para los datos del proyecto (opcional, pero recomendado)
 interface ProjectData {
@@ -62,12 +63,16 @@ const Editor: React.FC = () => {
   return (
     <div>
       <AppContext.Provider value={editor}>
-        <Navbar />
-          <div 
-          id="gjs" 
-          ref={editorRef} 
-          style={{ height: '80vh', width: '99%', border: '1px solid #ccc' }} ></div>
-        <button id="export-btn">Exportar proyecto</button>
+      <div className="flex-1 flex flex-col">
+          <Navbar />
+          <div className="flex flex-row">
+            <ChatPanel />
+              <div 
+              id="gjs" 
+              ref={editorRef} 
+              style={{ height: '80vh', width: '99%' }} ></div>
+          </div>
+        </div>
       </AppContext.Provider>
     </div>
   );
