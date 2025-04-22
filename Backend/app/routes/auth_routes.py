@@ -24,9 +24,9 @@ def get_auth_service(db: AsyncSession = Depends(get_db)):
 async def login(credentials: LoginRequest, service: AuthService = Depends(get_auth_service)):
     try:
         user = service.login(credentials.email, credentials.password)
-        access_token = service.create_access_token(data={"sub": user.email}, expires_delta=timedelta(minutes=120))
         if not user:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        access_token = service.create_access_token(data={"sub": user.email}, expires_delta=timedelta(minutes=120))
         return TokenResponse(access_token=access_token, token_type="bearer")
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

@@ -1,4 +1,5 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
 from .database import init_db
 from .routes import user_routes
 from .routes import project_routes
@@ -11,6 +12,24 @@ app = FastAPI(title="Angular Project Generator API")
 @app.on_event("startup")
 def on_startup():
     init_db()
+    
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost:8000",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+dev_origins = [
+    "*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=dev_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
     
 app.include_router( user_routes.router, prefix="/api")
 app.include_router( project_routes.router, prefix="/api")  
