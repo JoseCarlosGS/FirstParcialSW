@@ -16,6 +16,9 @@ class UserUpdate(BaseModel):
 
 class UserResponse(UserBase):
     id: int
-
+    created_at: str
+    updated_at: str
+    last_login: Optional[str] = None
+    is_superuser: Optional[bool] = False
     class Config:
         orm_mode = True

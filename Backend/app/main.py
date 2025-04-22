@@ -10,13 +10,12 @@ app = FastAPI(title="Angular Project Generator API")
 
 @app.on_event("startup")
 def on_startup():
-    print("creando la base de datos")
     init_db()
     
 app.include_router( user_routes.router, prefix="/api")
 app.include_router( project_routes.router, prefix="/api")  
 app.include_router(socket_routes.router, prefix="/api") 
-app.include_router(auth_routes.router, prefix="/api")
+app.include_router(auth_routes.router, prefix="/auth")
 
 @app.websocket("/ws/project/{project_id}")
 async def project_status_websocket(websocket: WebSocket, project_id: str):
