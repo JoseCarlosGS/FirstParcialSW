@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from abc import ABC, abstractmethod
-from ...models.project import ProjectConfig
+from ...models.project import Project
 import subprocess
 import zipfile
 import os
@@ -17,7 +17,7 @@ class GenerateByCommand(GenerateProjectStrategy):
         self.temp_dir = os.path.join(os.getcwd(), "temp-projects")
         os.makedirs(self.temp_dir, exist_ok=True)  # Crear el directorio si no existe
 
-    def execute(self, project_name: str, config: ProjectConfig, component_type: str, output_dir: str) -> dict:
+    def execute(self, project_name: str, config: Project, component_type: str, output_dir: str) -> dict:
         """Ejecuta la generación de un componente en el directorio especificado."""
         project_name = config.project_name.strip()
         if not project_name:

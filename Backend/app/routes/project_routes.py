@@ -1,19 +1,29 @@
 import os
 import uuid
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, HTTPException, Depends, File, UploadFile
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import FileResponse
 
-from ..database import SessionDep
-from ..schemas.proyect_schemas import ProjectSchema
+from ..database import get_session as get_db
+from sqlmodel import Session
+from ..schemas.proyect_schemas import ProjectRequest, ProjectResponse
 from ..schemas.config_schemas import ProjectConfig
-from ..schemas.proyect_schemas import print_structure
 from ..services.project_generator import AngularProjectGenerator
+from ..repositories.project_repository import ProjectRepository
+from ..repositories.user_repository import UserRepository
+from ..services.project_services import ProjectService
 
 router = APIRouter(prefix="/project", tags=["projects"])
 
 generator = AngularProjectGenerator()
+
+async def get_project_service(db: Session = Depends(get_db)):
+    """Obtiene el servicio de usuarios con sus dependencias"""
+    project_repo = ProjectRepository(db)
+    user_repo = UserRepository(db)
+    service = ProjectService(project_repository=project_repo, user_repository=user_repo)
+    return service
 
 def borrar_archivo(path: str):
     if os.path.exists(path):
@@ -23,15 +33,21 @@ def borrar_archivo(path: str):
 async def get_all():
     pass
 
-@router.post("/")
-async def create(project: ProjectSchema) -> dict:
-    # Para depuración
-    
-    # Serializar explícitamente para asegurar que todos los campos están presentes
-    return project.dict()
+@router.post("/{user_id}")
+async def create_project(
+    user_id: int,
+    project: ProjectRequest = Depends(ProjectRequest.as_form),
+    file: UploadFile = File(...),
+    service: ProjectService = Depends(get_project_service)
+):
+    try:
+        new_project = service.create_project(project.model_dump(), user_id, file)
+        return new_project
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail={"detail": str(e)})
 
 @router.post("/alt")
-async def create_alt(project: ProjectSchema) -> ProjectSchema:
+async def create_alt(project: ProjectRequest) -> ProjectResponse:
     # Para Pydantic v1
     # project_dict = project.dict(by_alias=True, exclude_none=False)
     # Para Pydantic v2

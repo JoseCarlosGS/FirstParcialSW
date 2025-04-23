@@ -1,9 +1,10 @@
-from typing import Annotated
+from sqlmodel import Field, SQLModel, Relationship
+from typing import List, TYPE_CHECKING
+from ..models.user_project import UserProjectLink
 
-from fastapi import Depends, FastAPI, HTTPException, Query
-from sqlmodel import Field, Session, SQLModel, create_engine, select
-
-
+if TYPE_CHECKING:
+    from ..models.project import Project
+    
 class User(SQLModel, table=True):
     id: int = Field(primary_key=True)
     email: str = Field(index=True, unique=True)
@@ -15,5 +16,9 @@ class User(SQLModel, table=True):
     updated_at: str = Field(default="2023-10-01T00:00:00Z")
     last_login: str = Field(default="2023-10-01T00:00:00Z")
     
-
-# Code below omitted 👇
+    projects_link: List["UserProjectLink"] = Relationship(back_populates="user")
+    projects: List["Project"] = Relationship(
+        back_populates="users", link_model=UserProjectLink
+    )
+    
+    

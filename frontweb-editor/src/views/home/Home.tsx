@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronLeft, ChevronRight, PlusCircle, LogOut, User, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../componets/Navbar';
+
 
 const Home = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -30,45 +32,14 @@ const Home = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-700">
       {/* Navbar */}
-      <nav className="bg-white shadow-md p-4">
-        <div className="flex items-center justify-between">
-          <div className="text-xl font-bold text-blue-600">MiDashboard</div>
-          <div className="relative">
-            <button 
-              onClick={toggleUserMenu}
-              className="flex items-center space-x-2"
-            >
-              <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                JD
-              </div>
-            </button>
-            
-            {showUserMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  <User size={16} className="mr-2" />
-                  Perfil
-                </a>
-                <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  <Settings size={16} className="mr-2" />
-                  Ajustes
-                </a>
-                <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                  <LogOut size={16} className="mr-2" />
-                  Cerrar Sesión
-                </a>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar/>
       
       {/* Contenido principal */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-800">Mis Proyectos</h1>
+          <h1 className="text-2xl font-bold text-gray-100">Mis Proyectos</h1>
             <button 
             className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
             onClick={() => navigate('/editor')}
@@ -79,19 +50,19 @@ const Home = () => {
         </div>
         
         {/* Slider de Proyectos */}
-        <div className="bg-white rounded-lg shadow-md p-6 relative">
+        <div className="bg-gray-500 rounded-lg shadow-md p-6 relative">
           <div className="flex items-center">
             <button 
               onClick={prevProject}
-              className="absolute left-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+              className="absolute left-4 bg-gray-600 rounded-full p-2 shadow-md hover:bg-gray-400"
             >
               <ChevronLeft size={24} />
             </button>
             
             <div className="w-full px-12">
               <div className="flex flex-col items-center">
-                <h2 className="text-xl font-bold text-gray-800 mb-2">{proyectos[currentIndex].nombre}</h2>
-                <p className="text-gray-600 mb-4">{proyectos[currentIndex].descripcion}</p>
+                <h2 className="text-xl font-bold text-gray-200 mb-2">{proyectos[currentIndex].nombre}</h2>
+                <p className="text-gray-400 mb-4">{proyectos[currentIndex].descripcion}</p>
                 
                 <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
                   <div 
@@ -100,7 +71,7 @@ const Home = () => {
                   ></div>
                 </div>
                 
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-gray-200">
                   Progreso: {proyectos[currentIndex].progreso}%
                 </div>
                 
@@ -117,7 +88,7 @@ const Home = () => {
             
             <button 
               onClick={nextProject}
-              className="absolute right-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100"
+              className="absolute right-4 bg-gray-600 rounded-full p-2 shadow-md hover:bg-gray-400"
             >
               <ChevronRight size={24} />
             </button>

@@ -91,7 +91,7 @@ const ChatPanel: React.FC = () => {
         {/* Panel principal */}
         
         <div 
-            className={`bg-gray-900 border-r border-gray-200 flex flex-col transition-all duration-200 ${
+            className={`bg-gray-800 border-r border-gray-700 flex flex-col transition-all duration-200 ${
                 isOpen ? 'w-64' : 'w-0 h-0'
             } ${!isOpen ? 'overflow-hidden' : ''}`}
             style={{ minWidth: 0 }}
@@ -153,7 +153,7 @@ const ChatPanel: React.FC = () => {
             </div>
             
             {/* Sección de chat */}
-            <div className="flex-1 flex flex-col overflow-hidden p-4 bg-gray-900">
+            <div className="flex-1 flex flex-col overflow-hidden p-4 bg-gray-800">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="font-semibold text-white flex items-center">
                     <MessageSquare className="mr-2" size={18} />

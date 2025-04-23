@@ -3,6 +3,9 @@ import { useEditor } from '../../contexts/AppContext';
 import { User } from 'lucide-react';
 import { Settings } from 'lucide-react';
 import { LogOut } from 'lucide-react';
+import { logout } from '../../services/LoginServices';
+import { useNavigate } from 'react-router-dom';
+
 
 const Navbar: React.FC = () => {
   const editor = useEditor();
@@ -10,6 +13,7 @@ const Navbar: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -68,6 +72,11 @@ const Navbar: React.FC = () => {
   const toggleUserMenu = () => {
     setShowUserMenu(!showUserMenu);
   };
+
+  const handleLogout = async () =>{
+    await logout()
+    navigate('/')
+  }
 
   return (
     <nav className="bg-gray-900 text-white px-4 py-1 relative z-50">
@@ -136,7 +145,8 @@ const Navbar: React.FC = () => {
                 <Settings size={16} className="mr-2" />
                 Ajustes
               </a>
-              <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              <a href="#" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              onClick={handleLogout}>
                 <LogOut size={16} className="mr-2" />
                 Cerrar Sesión
               </a>

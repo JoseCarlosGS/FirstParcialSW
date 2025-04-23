@@ -20,7 +20,7 @@ const Login: React.FC = () => {
       await login(email, password);
       // Redirigir al usuario o realizar alguna acción adicional
       console.log('Inicio de sesión exitoso');
-      navigate('/home')
+      navigate('/')
     } catch (err: any) {
       setError(err.message || 'Error al iniciar sesión');
     } finally {

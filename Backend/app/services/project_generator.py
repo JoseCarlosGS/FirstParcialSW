@@ -9,7 +9,7 @@ from ..services.template_engine import TemplateEngine
 from ..services.component_generator import ComponentGenerator
 from ..services.strategies.generate_strategies import GenerateProjectStrategy, GenerateByCommand
 from ..services.strategies.generate_code import DefaultCodeGenerationStrategy
-from ..models.project import ProjectConfig
+from ..models.project import Project
 
 class AngularProjectGenerator:
     def __init__(self):
@@ -27,7 +27,7 @@ class AngularProjectGenerator:
             raise ValueError("Strategy not set")
         return self.strategy.execute(*args, **kwargs)
         
-    def generate_project(self, config: ProjectConfig, project_schema: ProjectSchema = None, ) -> str:
+    def generate_project(self, config: Project, project_schema: ProjectSchema = None, ) -> str:
         """Genera un proyecto Angular completo basado en el esquema y devuelve la ruta al zip"""
         # Crear directorio temporal para el proyecto
         self.set_strategy(GenerateByCommand())
