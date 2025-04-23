@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import grapesjs from 'grapesjs';
-import { Editor as GrapesEditor } from 'grapesjs';
+import { Editor as GrapesjsEditor } from 'grapesjs';
 import io from 'socket.io-client';
 import 'grapesjs/dist/css/grapes.min.css';
 import { customBlocks } from '../../../constants/CustomBlocks';
@@ -8,6 +8,8 @@ import Navbar from '../../componets/Navbar';
 import { useEditor } from '../../../contexts/AppContext';
 import { AppContext } from '../../../contexts/AppContext';
 import ChatPanel from './ChatPanel';
+import GrapesEditor from './../components/GrapesEditor';
+
 
 // Tipo para los datos del proyecto (opcional, pero recomendado)
 interface ProjectData {
@@ -17,7 +19,7 @@ interface ProjectData {
 
 const Editor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement | null>(null);
-  const [editor, setEditor] = useState<GrapesEditor | null>(null);
+  const [editor, setEditor] = useState<GrapesjsEditor | null>(null);
   //const socket = useRef(io('http://localhost:3000')); // Conexión a Socket.IO
 
   useEffect(() => {
@@ -67,10 +69,13 @@ const Editor: React.FC = () => {
           <Navbar />
           <div className="flex flex-row">
             <ChatPanel />
-              <div 
+              <GrapesEditor/>
+              {/* <div 
               id="gjs" 
               ref={editorRef} 
-              style={{ height: '80vh', width: '99%' }} ></div>
+              style={{ height: '80vh', width: '99%' }} >
+
+              </div> */}
           </div>
         </div>
       </AppContext.Provider>
