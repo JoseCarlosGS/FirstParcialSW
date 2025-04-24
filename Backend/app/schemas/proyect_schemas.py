@@ -17,3 +17,4 @@ class ProjectResponse(ProjectSchema):
     id: int
     created_at: str
     updated_at: str
+    is_owner: bool

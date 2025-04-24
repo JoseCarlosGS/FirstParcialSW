@@ -79,9 +79,17 @@ class ProjectRepository:
         )
         return self.session.exec(statement).all()
 
-    def get_projects_by_user(self, user_id: int) -> list[Project]:
-        statement = select(Project).join(UserProjectLink).where(
+    def get_projects_by_user(self, user_id: int) -> list[dict]:
+        statement = select(Project, UserProjectLink.is_owner).join(UserProjectLink).where(
             UserProjectLink.id_user == user_id,
             UserProjectLink.is_active == True
         )
-        return self.session.exec(statement).all()
+        results = self.session.exec(statement).all()
+        formatted_results = [
+            {
+                **project.model_dump(),  # Convierte el objeto Project a un diccionario
+                "is_owner": is_owner  # Añade el atributo is_owner como una clave adicional
+            }
+            for project, is_owner in results
+        ]
+        return formatted_results

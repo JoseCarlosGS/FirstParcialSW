@@ -41,9 +41,9 @@ class ProjectService:
         except ValueError as e:
             raise e
         
-    def get_all_by_user_id(self, user_id:int)->List[Project]:
+    def get_all_by_user_id(self, user_id:int)->List[dict]:
         if not self.user_repo.get_user_by_id(user_id):
-            raise HTTPException(status_code=404, detail={"detail":"user not found"})
+            raise HTTPException(status_code=404, detail={"detail":"user not found"}) 
         return self.project_repo.get_projects_by_user(user_id)
         
     def get_users_by_project(self, project_id:int)->List[User]:

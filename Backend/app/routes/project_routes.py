@@ -13,6 +13,7 @@ from ..services.project_generator import AngularProjectGenerator
 from ..repositories.project_repository import ProjectRepository
 from ..repositories.user_repository import UserRepository
 from ..services.project_services import ProjectService
+from ..schemas.user_schemas import UserResponse
 
 router = APIRouter(prefix="/project", tags=["projects"])
 
@@ -29,9 +30,15 @@ def borrar_archivo(path: str):
     if os.path.exists(path):
         os.remove(path)
 
-@router.get("/")
-async def get_all():
-    pass
+@router.get("/projects")
+async def get_all(user_id: int,
+                  service: ProjectService = Depends(get_project_service))->list[ProjectResponse]:
+    return service.get_all_by_user_id(user_id)
+
+@router.get("/users")
+async def get_users(project_id: int,
+                  service: ProjectService = Depends(get_project_service))->list[UserResponse]:
+    return service.get_users_by_project(project_id)
 
 @router.post("/{user_id}")
 async def create_project(
