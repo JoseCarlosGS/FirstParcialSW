@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ChevronLeft, ChevronRight, PlusCircle, LogOut, User, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../componets/Navbar';
+import { AppProvider} from './../../contexts/AppContext';
 
 
 const Home = () => {
@@ -32,9 +33,14 @@ const Home = () => {
   };
   
   return (
+    
     <div className="min-h-screen bg-gray-700">
+      <AppProvider>
+        <Navbar/>
+      </AppProvider>
+
       {/* Navbar */}
-      <Navbar/>
+      
       
       {/* Contenido principal */}
       <div className="container mx-auto px-4 py-8">

@@ -1,8 +1,17 @@
 import StudioEditor from '@grapesjs/studio-sdk/react';
 import '@grapesjs/studio-sdk/style';
+import { useEditor } from '../../../contexts/AppContext';
+import { useEffect } from 'react';
 
 // ...
 const GrapesEditor = () => {
+    const { setEditor } = useEditor();
+    
+    const handleEditorReady = (editorInstance:any) => {
+        // Guardar la instancia del editor en el contexto
+        setEditor(editorInstance);
+        console.log('Editor listo y guardado en contexto: ', editorInstance);
+    };
 
 return(
     <StudioEditor
@@ -19,8 +28,10 @@ return(
             { name: 'Contact', component: '<h1>Contact page</h1>' },
             ]
         },
-        }
+        },
+        onReady: handleEditorReady,
     }}
+    
     />
 )}
 

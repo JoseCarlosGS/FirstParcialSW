@@ -5,8 +5,7 @@ import io from 'socket.io-client';
 import 'grapesjs/dist/css/grapes.min.css';
 import { customBlocks } from '../../../constants/CustomBlocks';
 import Navbar from '../../componets/Navbar';
-import { useEditor } from '../../../contexts/AppContext';
-import { AppContext } from '../../../contexts/AppContext';
+import { AppProvider} from '../../../contexts/AppContext';
 import ChatPanel from './ChatPanel';
 import GrapesEditor from './../components/GrapesEditor';
 
@@ -19,7 +18,6 @@ interface ProjectData {
 
 const Editor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement | null>(null);
-  const [editor, setEditor] = useState<GrapesjsEditor | null>(null);
   //const socket = useRef(io('http://localhost:3000')); // Conexión a Socket.IO
 
   useEffect(() => {
@@ -38,7 +36,7 @@ const Editor: React.FC = () => {
         
       })
       customBlocks.forEach(block => e.BlockManager.add(block.id, block));
-      setEditor(e);
+      //setEditor(e);
     
 
     // // Escuchar cambios locales y enviar al servidor
@@ -64,7 +62,7 @@ const Editor: React.FC = () => {
 
   return (
     <div>
-      <AppContext.Provider value={editor}>
+      <AppProvider>
       <div className="flex-1 flex flex-col">
           <Navbar />
           <div className="flex flex-row">
@@ -78,7 +76,7 @@ const Editor: React.FC = () => {
               </div> */}
           </div>
         </div>
-      </AppContext.Provider>
+      </AppProvider>
     </div>
   );
 };

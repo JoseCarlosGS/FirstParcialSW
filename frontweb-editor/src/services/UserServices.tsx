@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-const BASE_URL = 'http://localhost:8000/auth'
+const BASE_URL = 'http://localhost:8000/api'
 
 export interface User {
     id: number;

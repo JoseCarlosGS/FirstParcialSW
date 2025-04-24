@@ -91,7 +91,7 @@ const ChatPanel: React.FC = () => {
         {/* Panel principal */}
         
         <div 
-            className={`bg-gray-800 border-r border-gray-700 flex flex-col transition-all duration-200 ${
+            className={`bg-gray-1500 border-r border-gray-900 flex flex-col transition-all duration-200 ${
                 isOpen ? 'w-64' : 'w-0 h-0'
             } ${!isOpen ? 'overflow-hidden' : ''}`}
             style={{ minWidth: 0 }}
@@ -102,7 +102,7 @@ const ChatPanel: React.FC = () => {
                 </h2>
                 <button 
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-300 hover:text-gray-200"
                 >
                 {isOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
                 </button>
@@ -153,7 +153,7 @@ const ChatPanel: React.FC = () => {
             </div>
             
             {/* Sección de chat */}
-            <div className="flex-1 flex flex-col overflow-hidden p-4 bg-gray-800">
+            <div className="flex-1 flex flex-col overflow-hidden p-4 bg-gray-1000">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="font-semibold text-white flex items-center">
                     <MessageSquare className="mr-2" size={18} />
