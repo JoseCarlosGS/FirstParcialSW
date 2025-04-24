@@ -123,7 +123,7 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="bg-gray-1000 text-white px-4 py-1.5 relative z-50">
+    <nav className="bg-gray-900 text-white px-4 py-1.5 relative z-50 border-b border-gray-800 border-radius-2">
     <div className="flex items-center justify-between h-12">
       {/* Izquierda: Logo y menú Proyecto */}
       <div className="flex items-center space-x-3">
@@ -174,7 +174,7 @@ const Navbar: React.FC = () => {
           onClick={toggleUserMenu}
           className="flex items-center space-x-2 bg-transparent hover:bg-transparent appearance-none"
         >
-          <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-sm font-bold">
+          <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-sm font-bold">
             JD
           </div>
         </button>

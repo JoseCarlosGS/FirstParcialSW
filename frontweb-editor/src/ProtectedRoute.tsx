@@ -3,7 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 const ProtectedRoute: React.FC = () => {
   // Verifica si el usuario tiene un token almacenado
-  const isAuthenticated = !!localStorage.getItem('token');
+  const isAuthenticated = !!sessionStorage.getItem('token');
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
 };

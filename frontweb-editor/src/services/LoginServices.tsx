@@ -5,7 +5,8 @@ const API_URL = 'http://localhost:8000/auth'
 export const login = async (email: string, password: string) => {
     try {
         const response = await axios.post(`${API_URL}/login`, { email, password });
-        localStorage.setItem('token', response.data.access_token)
+        sessionStorage.setItem('token', response.data.access_token)
+        sessionStorage.setItem('user_id', response.data.user_id)
         return response.data; // Token or user data  
     } catch (error) {
         console.error('Login error:', error);
@@ -25,15 +26,17 @@ export const register = async (email: string, password: string) => {
 
 export const logout = () => {
     // Clear local storage or cookies
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user_id')
 };
 
 export const getCurrentUser = () => {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
+    //const token = localStorage.getItem('token');
+    const user = sessionStorage.getItem('user')
+    if (!user) return null;
 
     // Decode token or fetch user data
-    return token;
+    return parseInt(user);
 };
 
 export const getHeaders = () => {

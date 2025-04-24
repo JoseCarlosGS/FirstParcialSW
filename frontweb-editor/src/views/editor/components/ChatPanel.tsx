@@ -79,142 +79,156 @@ const ChatPanel: React.FC = () => {
   };
 
     return (
-        <div className="flex h-full relative max-h-full ">
-            {/* Botón para mostrar/ocultar */}
-            {!isOpen && <button 
-                onClick={() => setIsOpen(!isOpen)}
-                className="opacity-35 hover:opacity-100 transition-opacity duration-300 absolute left-full bg-gradient-to-b from-gray-600 to-gray-800 text-white p-1 rounded-full shadow-md z-10 w-8 h-10"
-                >
-                <ChevronRight size={16} /> 
-            </button>}
-        
+      <div className="flex h-full relative max-h-full ">
+        {/* Botón para mostrar/ocultar */}
+        {!isOpen && (
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="opacity-35 hover:opacity-100 transition-opacity duration-300 absolute left-full bg-gradient-to-b from-gray-600 to-gray-800 text-white p-1 rounded-full shadow-md z-10 w-8 h-10"
+          >
+            <ChevronRight size={16} />
+          </button>
+        )}
+
         {/* Panel principal */}
-        
-        <div 
-            className={`bg-gray-1500 border-r border-gray-900 flex flex-col transition-all duration-200 ${
-                isOpen ? 'w-64' : 'w-0 h-0'
-            } ${!isOpen ? 'overflow-hidden' : ''}`}
-            style={{ minWidth: 0 }}
+
+        <div
+          className={`bg-gray-900 border-r border-gray-900 flex flex-col transition-all duration-200 ${
+            isOpen ? "w-64" : "w-0 h-0"
+          } ${!isOpen ? "overflow-hidden" : ""}`}
+          style={{ minWidth: 0 }}
         >
-            <div className='flex items-center justify-between'>
-                <h2 className="font-bold text-white flex items-center m-4">
-                    Proyecto 
-                </h2>
-                <button 
-                onClick={() => setIsOpen(!isOpen)}
-                className="text-gray-300 hover:text-gray-200"
-                >
-                {isOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
-                </button>
-            </div>
-            {/* Sección de usuarios */}
-            <div className="p-3 border-b border-gray-200">
+          <div className="flex items-center justify-between border-b border-gray-800">
+            <h2 className="font-bold text-white flex items-center m-4">
+              Proyecto
+            </h2>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-gray-300 hover:text-gray-200"
+            >
+              {isOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+            </button>
+          </div>
+          {/* Sección de usuarios */}
+          <div className="p-3 border-b border-gray-200">
             <div className="flex items-center justify-between mb-4">
-                <h2 className="font-semibold text-white flex items-center">
+              <h2 className="font-semibold text-white flex items-center">
                 <UserCircle className="mr-2" size={18} />
-                Usuarios ({users.filter(u => u.isOnline).length}/{users.length})
-                </h2>
+                Miembros ({users.filter((u) => u.isOnline).length}/
+                {users.length})
+              </h2>
             </div>
-            
+
             <div className="max-h-48 overflow-y-auto">
-                {users.map(user => (
-                <div key={user.id} className="flex items-center py-2 hover:bg-gray-800 rounded-md px-2">
-                    <div className="relative mr-2">
+              {users.map((user) => (
+                <div
+                  key={user.id}
+                  className="flex items-center py-2 hover:bg-gray-800 rounded-md px-2"
+                >
+                  <div className="relative mr-2">
                     {user.avatar ? (
-                        <img 
-                        src={user.avatar} 
-                        alt={user.name} 
+                      <img
+                        src={user.avatar}
+                        alt={user.name}
                         className="w-8 h-8 rounded-full"
-                        />
+                      />
                     ) : (
-                        <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
                         <span className="text-gray-600 font-medium">
-                            {user.name.charAt(0)}
+                          {user.name.charAt(0)}
                         </span>
-                        </div>
+                      </div>
                     )}
-                    <span 
-                        className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
-                        user.isOnline ? 'bg-green-500' : 'bg-gray-400'
-                        }`}
+                    <span
+                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
+                        user.isOnline ? "bg-green-500" : "bg-gray-400"
+                      }`}
                     />
-                    </div>
-                    <div className="flex-1 min-w-0">
+                  </div>
+                  <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-700 truncate">
-                        {user.name}
+                      {user.name}
                     </p>
                     <p className="text-xs text-gray-500">
-                        {user.isOnline ? 'En línea' : formatLastSeen(user.lastSeen)}
+                      {user.isOnline
+                        ? "En línea"
+                        : formatLastSeen(user.lastSeen)}
                     </p>
-                    </div>
+                  </div>
                 </div>
-                ))}
+              ))}
             </div>
+          </div>
+
+          {/* Sección de chat */}
+          <div className="flex-1 flex flex-col overflow-hidden p-3 bg-gray-900">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-white flex items-center">
+                <MessageSquare className="mr-2" size={18} />
+                Chat
+              </h2>
             </div>
-            
-            {/* Sección de chat */}
-            <div className="flex-1 flex flex-col overflow-hidden p-4 bg-gray-1000">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="font-semibold text-white flex items-center">
-                    <MessageSquare className="mr-2" size={18} />
-                    Chat del proyecto
-                    </h2>
-                </div>
-            
+
             {/* Mensajes */}
             <div className="flex-1 overflow-y-auto mb-4 pr-2 max-h-74">
-                {messages.map(message => {
-                const user = users.find(u => u.id === message.userId);
-                const isCurrentUser = message.userId === '1'; // Ejemplo, ajustar a lógica real
-                
+              {messages.map((message) => {
+                const user = users.find((u) => u.id === message.userId);
+                const isCurrentUser = message.userId === "1"; // Ejemplo, ajustar a lógica real
+
                 return (
-                    <div 
-                    key={message.id} 
-                    className={`mb-3 flex ${isCurrentUser ? 'justify-end' : 'justify-start'}`}
+                  <div
+                    key={message.id}
+                    className={`mb-3 flex ${
+                      isCurrentUser ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`max-w-xs rounded-lg px-3 py-2 ${
+                        isCurrentUser
+                          ? "bg-blue-800 text-gray-300 rounded-br-none"
+                          : "bg-gray-700 text-gray-300 rounded-bl-none"
+                      }`}
                     >
-                    <div 
-                        className={`max-w-xs rounded-lg px-3 py-2 ${
-                        isCurrentUser 
-                            ? 'bg-blue-800 text-gray-300 rounded-br-none' 
-                            : 'bg-gray-700 text-gray-300 rounded-bl-none'
-                        }`}
-                    >
-                        {!isCurrentUser && (
+                      {!isCurrentUser && (
                         <p className="text-xs font-bold mb-1 text-white">
-                            {user?.name || 'Usuario'}
+                          {user?.name || "Usuario"}
                         </p>
-                        )}
-                        <p className="text-sm">{message.text}</p>
-                        <p className={`text-xs mt-1 ${isCurrentUser ? 'text-blue-100' : 'text-gray-500'}`}>
+                      )}
+                      <p className="text-sm">{message.text}</p>
+                      <p
+                        className={`text-xs mt-1 ${
+                          isCurrentUser ? "text-blue-100" : "text-gray-500"
+                        }`}
+                      >
                         {formatTime(message.timestamp)}
-                        </p>
+                      </p>
                     </div>
-                    </div>
+                  </div>
                 );
-                })}
-                <div ref={messageEndRef} />
+              })}
+              <div ref={messageEndRef} />
             </div>
-            
+
             {/* Input de mensaje */}
             <div className="flex items-center bg-white rounded-lg border border-gray-300 overflow-hidden">
-                <input
+              <input
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                 placeholder="Escribe un mensaje..."
                 className="flex-1 py-2 px-3 focus:outline-none text-sm"
-                />
-                <button
+              />
+              <button
                 onClick={handleSendMessage}
                 className="bg-blue-500 hover:bg-blue-600 text-white p-2"
-                >
+              >
                 <Send size={18} />
-                </button>
+              </button>
             </div>
-            </div>
+          </div>
         </div>
-        </div>
+      </div>
     );
     };
 

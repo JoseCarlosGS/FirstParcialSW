@@ -1,12 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
+import { User } from '../interfaces/User';
 
 const BASE_URL = 'http://localhost:8000/api'
-
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-  }
   
   export interface LoginRequest {
     email: string;
