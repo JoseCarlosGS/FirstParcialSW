@@ -32,7 +32,7 @@ export const logout = () => {
 
 export const getCurrentUser = () => {
     //const token = localStorage.getItem('token');
-    const user = sessionStorage.getItem('user')
+    const user = sessionStorage.getItem('user_id')
     if (!user) return null;
 
     // Decode token or fetch user data

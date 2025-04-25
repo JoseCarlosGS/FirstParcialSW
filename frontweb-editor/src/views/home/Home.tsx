@@ -60,8 +60,9 @@ const Home = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + proyectos.length) % proyectos.length);
   };
   
-  const toggleUserMenu = () => {
-    setShowUserMenu(!showUserMenu);
+  const editProject = (id:number) => {
+    console.log('cargando el proyecto: ', id)
+    navigate(`/editor?id=${id}`);
   };
   
   return (
@@ -117,7 +118,9 @@ const Home = () => {
                     <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors">
                       Ver Detalles
                     </button>
-                    <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition-colors">
+                    <button 
+                    onClick={() => editProject(proyectos[currentIndex].id)}
+                    className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition-colors">
                       Editar
                     </button>
                   </div>

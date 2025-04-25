@@ -1,14 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { UserCircle, MessageSquare, ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import { UserCircle, MessageSquare, ChevronLeft, ChevronRight, Send, Plus } from 'lucide-react';
+import { ProjectServices } from '../../../services/ProjectServices';
+import { User } from '../../../interfaces/User';
 
 // Definición de tipos
-interface User {
-  id: string;
-  name: string;
-  avatar?: string;
-  isOnline: boolean;
-  lastSeen?: Date;
-}
 
 interface Message {
   id: string;
@@ -17,34 +12,39 @@ interface Message {
   timestamp: Date;
 }
 
-// Datos de ejemplo (reemplazar con datos reales de tu backend)
-const sampleUsers: User[] = [
-  { id: '1', name: 'Ana García', isOnline: true },
-  { id: '2', name: 'Carlos Mendez', isOnline: false, lastSeen: new Date('2025-04-21T10:30:00') },
-  { id: '3', name: 'María López', isOnline: true },
-  { id: '4', name: 'Juan Pérez', isOnline: false, lastSeen: new Date('2025-04-21T08:15:00') },
-];
-
 const sampleMessages: Message[] = [
   { id: '1', userId: '1', text: 'Hola a todos, estoy editando la sección de navegación', timestamp: new Date('2025-04-21T11:30:00') },
   { id: '2', userId: '3', text: 'Yo estoy trabajando en el footer', timestamp: new Date('2025-04-21T11:32:00') },
   { id: '3', userId: '2', text: 'Acabo de terminar el diseño del header', timestamp: new Date('2025-04-21T11:35:00') },
 ];
 
-const ChatPanel: React.FC = () => {
+const ChatPanel: React.FC<any> = (projectId) => {
   // Estados
   const [isOpen, setIsOpen] = useState(true);
-  const [users, setUsers] = useState<User[]>(sampleUsers);
+  const [users, setUsers] = useState<User[] | undefined>(undefined);
   const [messages, setMessages] = useState<Message[]>(sampleMessages);
   const [newMessage, setNewMessage] = useState('');
   const messageEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (projectId !== null) {
+      const fetchUsers = async () => {
+        try {
+          const data = await ProjectServices.getAllUsersByProjectId(projectId.project);
+          setUsers(data);
+        } catch (error) {
+          console.error('Error al obtener usuarios:', error);
+        }
+      };
+
+      fetchUsers();
+    }
+  }, [projectId]);
   
-  // Autoscroll al recibir nuevos mensajes
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Función para enviar un mensaje
   const handleSendMessage = () => {
     if (newMessage.trim() === '') return;
     
@@ -79,16 +79,18 @@ const ChatPanel: React.FC = () => {
   };
 
     return (
-      <div className="flex h-full relative max-h-full ">
-        {/* Botón para mostrar/ocultar */}
-        {!isOpen && (
+      <div className="h-full relative z-20">
+      {/* Botón fijo a la izquierda de la pantalla */}
+      {!isOpen && (
+        <div className="fixed top-0.9 left-0 transform -translate-y-1/2">
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="opacity-35 hover:opacity-100 transition-opacity duration-300 absolute left-full bg-gradient-to-b from-gray-600 to-gray-800 text-white p-1 rounded-full shadow-md z-10 w-8 h-10"
+            onClick={() => setIsOpen(true)}
+            className="bg-gray-700 text-white rounded-r-md shadow-md opacity-30 hover:opacity-100 transition-opacity duration-300 w-8 h-10 flex items-center justify-center"
           >
-            <ChevronRight size={16} />
+            ☰
           </button>
-        )}
+        </div>
+      )}
 
         {/* Panel principal */}
 
@@ -109,50 +111,52 @@ const ChatPanel: React.FC = () => {
               {isOpen ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
             </button>
           </div>
+
           {/* Sección de usuarios */}
           <div className="p-3 border-b border-gray-200">
             <div className="flex items-center justify-between mb-4">
+              {/* Título con ícono */}
               <h2 className="font-semibold text-white flex items-center">
                 <UserCircle className="mr-2" size={18} />
-                Miembros ({users.filter((u) => u.isOnline).length}/
-                {users.length})
+                Miembros ({users?.filter((u) => u.is_active).length}/{users?.length})
               </h2>
+
+              {/* Botón más pequeño y alineado a la derecha */}
+              <button
+                type="button"
+                className="flex items-center text-xs text-gray-400 hover:text-white hover:bg-gray-700 font-medium rounded-md px-2 py-1 space-x-1 transition-colors"
+              >
+                <Plus size={14} />
+                <span>Añadir</span>
+              </button>
             </div>
 
             <div className="max-h-48 overflow-y-auto">
-              {users.map((user) => (
+              {users?.map((user) => (
                 <div
                   key={user.id}
                   className="flex items-center py-2 hover:bg-gray-800 rounded-md px-2"
                 >
                   <div className="relative mr-2">
-                    {user.avatar ? (
-                      <img
-                        src={user.avatar}
-                        alt={user.name}
-                        className="w-8 h-8 rounded-full"
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                        <span className="text-gray-600 font-medium">
-                          {user.name.charAt(0)}
-                        </span>
-                      </div>
-                    )}
+                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">
+                      {user.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
                     <span
                       className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
-                        user.isOnline ? "bg-green-500" : "bg-gray-400"
+                        user.is_active ? "bg-green-500" : "bg-gray-400"
                       }`}
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-700 truncate">
+                    <p className="text-sm font-medium text-gray-200 truncate">
                       {user.name}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {user.isOnline
+                      {user.is_active
                         ? "En línea"
-                        : formatLastSeen(user.lastSeen)}
+                        : formatLastSeen(user.last_login ? new Date(user.last_login) : undefined)}
                     </p>
                   </div>
                 </div>
@@ -172,7 +176,7 @@ const ChatPanel: React.FC = () => {
             {/* Mensajes */}
             <div className="flex-1 overflow-y-auto mb-4 pr-2 max-h-74">
               {messages.map((message) => {
-                const user = users.find((u) => u.id === message.userId);
+                const user = users?.find((u) => u.id.toString() === message.userId);
                 const isCurrentUser = message.userId === "1"; // Ejemplo, ajustar a lógica real
 
                 return (
@@ -230,6 +234,6 @@ const ChatPanel: React.FC = () => {
         </div>
       </div>
     );
-    };
+};
 
     export default ChatPanel;

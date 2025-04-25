@@ -25,4 +25,22 @@ export class ProjectServices {
         }
     }
 
+    static async fetchProjectFile(id: number): Promise<any> {
+      const response = await fetch(`${BASE_URL}/load?project_id=${id}`);
+      if (!response.ok) {
+        throw new Error("No se pudo obtener el archivo desde el backend.");
+      }
+      return await response.json();
+    };
+
+    static async addUserToProject(id:number): Promise<User[]>{
+      try{
+        const response : AxiosResponse<User[]> = await axios.get(`${BASE_URL}/projects?user_id=${id}`);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        throw error;
+      }
+    } 
+
 }
