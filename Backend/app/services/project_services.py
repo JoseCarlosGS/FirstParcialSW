@@ -4,6 +4,7 @@ import uuid
 from fastapi import UploadFile
 from pathlib import Path
 import shutil
+import json
 
 from ..repositories.project_repository import ProjectRepository
 from ..repositories.user_repository import UserRepository
@@ -31,13 +32,23 @@ class ProjectService:
         except ValueError as e:
             raise e
         
+    def load_project_by_id(self, project_id: int):
+        try:
+            project = self.project_repo.get_project_by_id(project_id)
+            if not project:
+                raise HTTPException(status_code=404, detail={"detail":"Project not found"})
+            url = project.url
+            return self._load_project_file(url) 
+        except ValueError as e:
+            raise e
+        
     def add_user_to_project(self, user_id: int, project_id: int)-> UserProjectLink:
         try:
             user = self.user_repo.get_user_by_id(user_id)
             project = self.project_repo.get_project_by_id(project_id)
             if not user or not project:
                 raise HTTPException(status_code=404, detail={"detail":"user or project not found"})
-            return self.project_repo.add_user_to_project(user_id=user.id, project_id=project.id, is_owner=True)
+            return self.project_repo.add_user_to_project(user_id=user.id, project_id=project.id, is_owner=False)
         except ValueError as e:
             raise e
         
@@ -74,3 +85,16 @@ class ProjectService:
 
         # Devolver ruta relativa o absoluta si lo prefieres
         return str(file_path)
+    
+    def _load_project_file(self, file_path: str):
+        """
+        Carga un archivo JSON desde la ruta especificada y devuelve su contenido como un diccionario.
+        
+        :param file_path: Ruta al archivo JSON (relativa o absoluta).
+        :return: Contenido del archivo como un diccionario.
+        """
+        path = Path(file_path)
+        if not path.is_file():
+            raise FileNotFoundError(f"El archivo {file_path} no existe.")
+        
+        return path

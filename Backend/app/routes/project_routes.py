@@ -104,3 +104,22 @@ async def download_project(project_id: str):
         media_type="application/zip",
         filename=f"angular-project-{project_id}.zip"
     )
+    
+@router.get("/load")
+async def load_project(
+    project_id: int, 
+    service: ProjectService=Depends(get_project_service)):
+    json_path = service.load_project_by_id(project_id)
+    return FileResponse(
+        json_path,
+        media_type="application/zip",
+        filename=f"angular-project-{project_id}.zip"
+    )
+    
+@router.get("/add")
+async def add_user_to_project(
+    user_id:int,
+    project_id: int, 
+    service: ProjectService=Depends(get_project_service)
+):
+    return service.add_user_to_project(user_id, project_id)
