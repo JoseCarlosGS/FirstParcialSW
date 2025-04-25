@@ -1,0 +1,457 @@
+{
+  "assets": [],
+  "styles": [
+    {
+      "selectors": [
+        "#izqa"
+      ],
+      "style": {
+        "padding-top": "0px",
+        "padding-right": "0px",
+        "padding-bottom": "0px",
+        "padding-left": "0px"
+      },
+      "wrapper": 1
+    },
+    {
+      "selectors": [
+        "#itn6l"
+      ],
+      "style": {
+        "font-weight": "normal"
+      }
+    },
+    {
+      "selectors": [
+        "#ix5tu"
+      ],
+      "style": {
+        "padding": "10px",
+        "font-family": "Courier New, Courier, monospace"
+      }
+    },
+    {
+      "selectors": [
+        "#i1mjg"
+      ],
+      "style": {
+        "font-family": "Arial, Helvetica, sans-serif",
+        "padding-top": "5px",
+        "padding-right": "5px",
+        "padding-bottom": "5px",
+        "padding-left": "5px",
+        "margin-top": "2px",
+        "margin-right": "2px",
+        "margin-bottom": "2px",
+        "margin-left": "2px"
+      }
+    },
+    {
+      "selectors": [
+        "#ivn49"
+      ],
+      "style": {
+        "padding-top": "5px",
+        "padding-right": "5px",
+        "padding-bottom": "5px",
+        "padding-left": "5px",
+        "margin-top": "2px",
+        "margin-right": "2px",
+        "margin-bottom": "2px",
+        "margin-left": "2px"
+      }
+    },
+    {
+      "selectors": [
+        "#ip20f"
+      ],
+      "style": {
+        "padding-top": "5px",
+        "padding-right": "5px",
+        "padding-bottom": "5px",
+        "padding-left": "5px",
+        "margin-top": "2px",
+        "margin-right": "2px",
+        "margin-bottom": "2px",
+        "margin-left": "2px",
+        "display": "block",
+        "position": "static"
+      }
+    },
+    {
+      "selectors": [
+        "#iovfg"
+      ],
+      "style": {
+        "padding-top": "5px",
+        "padding-right": "5px",
+        "padding-bottom": "5px",
+        "padding-left": "5px",
+        "margin-top": "2px",
+        "margin-right": "2px",
+        "margin-bottom": "2px",
+        "margin-left": "2px"
+      }
+    },
+    {
+      "selectors": [
+        "#igaqo"
+      ],
+      "style": {
+        "padding-top": "5px",
+        "padding-right": "5px",
+        "padding-bottom": "5px",
+        "padding-left": "5px",
+        "margin-top": "2px",
+        "margin-right": "2px",
+        "margin-bottom": "2px",
+        "margin-left": "2px",
+        "display": "flex",
+        "justify-content": "flex-start",
+        "align-items": "stretch"
+      }
+    },
+    {
+      "selectors": [
+        "#it1j5"
+      ],
+      "style": {
+        "padding-top": "5px",
+        "padding-right": "5px",
+        "padding-bottom": "5px",
+        "padding-left": "5px",
+        "margin-top": "2px",
+        "margin-right": "2px",
+        "margin-bottom": "2px",
+        "margin-left": "2px"
+      }
+    },
+    {
+      "selectors": [
+        "#idrkc"
+      ],
+      "style": {
+        "font-family": "Arial, Helvetica, sans-serif"
+      }
+    },
+    {
+      "selectors": [
+        "#ieyo1"
+      ],
+      "style": {
+        "margin-left": "10px"
+      }
+    },
+    {
+      "selectors": [
+        "#imllf"
+      ],
+      "style": {
+        "margin-left": "10px"
+      }
+    },
+    {
+      "selectors": [
+        "#iml3j"
+      ],
+      "style": {
+        "font-family": "Arial, Helvetica, sans-serif"
+      }
+    },
+    {
+      "selectors": [
+        "#in571"
+      ],
+      "style": {
+        "font-family": "Arial, Helvetica, sans-serif"
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "Home",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "attributes": {
+              "id": "izqa"
+            },
+            "components": [
+              {
+                "type": "heading",
+                "attributes": {
+                  "id": "i8si"
+                },
+                "components": [
+                  {
+                    "tagName": "span",
+                    "attributes": {
+                      "id": "itn6l"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "attributes": {
+                  "id": "ix5tu"
+                },
+                "components": [
+                  {
+                    "tagName": "b",
+                    "type": "text",
+                    "attributes": {
+                      "id": "i5mzr"
+                    },
+                    "components": [
+                      {
+                        "type": "textnode",
+                        "content": "Crear nuevo Usuario"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "form",
+                "attributes": {
+                  "method": "get",
+                  "id": "ik2yu"
+                },
+                "components": [
+                  {
+                    "components": [
+                      {
+                        "type": "label",
+                        "attributes": {
+                          "id": "i1mjg"
+                        },
+                        "components": [
+                          {
+                            "type": "textnode",
+                            "content": "Name"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "input",
+                        "void": true,
+                        "attributes": {
+                          "type": "text",
+                          "id": "ivn49"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "attributes": {
+                      "id": "ip20f"
+                    },
+                    "components": [
+                      {
+                        "type": "label",
+                        "attributes": {
+                          "id": "iml3j"
+                        },
+                        "components": [
+                          {
+                            "type": "textnode",
+                            "content": "Email: "
+                          }
+                        ]
+                      },
+                      {
+                        "type": "input",
+                        "void": true,
+                        "attributes": {
+                          "type": "email",
+                          "id": "imllf"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "attributes": {
+                      "id": "iovfg"
+                    },
+                    "components": [
+                      {
+                        "type": "label",
+                        "attributes": {
+                          "id": "in571"
+                        },
+                        "components": [
+                          {
+                            "type": "textnode",
+                            "content": "Gender:"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "checkbox",
+                        "void": true,
+                        "attributes": {
+                          "type": "checkbox",
+                          "value": "M",
+                          "id": "ifvcf"
+                        }
+                      },
+                      {
+                        "type": "label",
+                        "components": [
+                          {
+                            "type": "textnode",
+                            "content": "M"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "checkbox",
+                        "void": true,
+                        "attributes": {
+                          "type": "checkbox",
+                          "value": "F"
+                        }
+                      },
+                      {
+                        "type": "label",
+                        "components": [
+                          {
+                            "type": "textnode",
+                            "content": "F"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "attributes": {
+                      "id": "igaqo"
+                    },
+                    "components": [
+                      {
+                        "type": "label",
+                        "attributes": {
+                          "id": "idrkc"
+                        },
+                        "components": [
+                          {
+                            "type": "textnode",
+                            "content": "Message: "
+                          }
+                        ]
+                      },
+                      {
+                        "type": "textarea",
+                        "attributes": {
+                          "id": "ieyo1"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "attributes": {
+                      "id": "it1j5"
+                    },
+                    "components": [
+                      {
+                        "type": "button",
+                        "attributes": {
+                          "type": "button"
+                        },
+                        "components": [
+                          {
+                            "type": "contentEditable",
+                            "components": [
+                              {
+                                "type": "textnode",
+                                "content": "Button"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "DkKK6Ji0IDKGQN0R"
+        }
+      ],
+      "id": "Iq2lRr3RCieOjfUn"
+    },
+    {
+      "name": "About",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "components": [
+              {
+                "type": "heading",
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "About page"
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "mbX7fwsDbwND5Dh1"
+        }
+      ],
+      "id": "vjWtXsUnJl3C4VUL"
+    },
+    {
+      "name": "Contact",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "components": [
+              {
+                "type": "heading",
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "Contact page"
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "RwRtol9cFCyejRIM"
+        }
+      ],
+      "id": "Ae2yIFokEZNxYbek"
+    }
+  ],
+  "symbols": [],
+  "dataSources": [],
+  "custom": {
+    "projectType": "web",
+    "id": ""
+  }
+}

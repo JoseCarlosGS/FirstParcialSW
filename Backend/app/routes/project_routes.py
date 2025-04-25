@@ -45,13 +45,26 @@ async def create_project(
     user_id: int,
     project: ProjectRequest = Depends(ProjectRequest.as_form),
     file: UploadFile = File(...),
-    service: ProjectService = Depends(get_project_service)
+    service: ProjectService = Depends(get_project_service),
 ):
     try:
         new_project = service.create_project(project.model_dump(), user_id, file)
         return new_project
-    except ValueError as e:
-        raise HTTPException(status_code=500, detail={"detail": str(e)})
+    except Exception as e:
+        raise HTTPException(status_code=400, detail={"detail": str(e)})
+
+
+@router.put("/{project_id}")
+async def update_project(
+    project_id: int,
+    file: UploadFile = File(...),
+    service: ProjectService = Depends(get_project_service),
+):
+    try:
+        updated_project = service.update_project(project_id, file)
+        return updated_project
+    except Exception as e:
+        raise HTTPException(status_code=400, detail={"detail": str(e)})
 
 @router.post("/alt")
 async def create_alt(project: ProjectRequest) -> ProjectResponse:

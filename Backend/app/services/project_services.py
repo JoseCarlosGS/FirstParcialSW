@@ -32,6 +32,17 @@ class ProjectService:
         except ValueError as e:
             raise e
         
+    def update_project(self, project_id:int, file:UploadFile ) ->Project:
+        try:
+            project = self.project_repo.get_project_by_id(project_id)
+            if not project:
+                raise HTTPException(status_code=404, detail={"detail":"Project not found"})
+            self._update_project_file(project.url, file)
+            return project
+            
+        except ValueError as e:
+            raise e
+        
     def load_project_by_id(self, project_id: int):
         try:
             project = self.project_repo.get_project_by_id(project_id)
@@ -98,3 +109,14 @@ class ProjectService:
             raise FileNotFoundError(f"El archivo {file_path} no existe.")
         
         return path
+    
+    def _update_project_file(self, file_path: str, file: UploadFile)-> str:
+        try:
+            path = Path(file_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+
+            return file_path
+        except Exception as e:
+            raise ValueError(f"No se pudo actualizar el archivo en {file_path}. Error: {str(e)}")
