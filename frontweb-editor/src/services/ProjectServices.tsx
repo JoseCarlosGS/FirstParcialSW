@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { Project } from "../interfaces/Project";
+import { Project, ProjectRequest } from "../interfaces/Project";
 import { User } from '../interfaces/User';
 
 const BASE_URL = 'http://localhost:8000/api/project'
@@ -42,5 +42,30 @@ export class ProjectServices {
         throw error;
       }
     } 
+    static async createProject(
+      userId: number,
+      project: ProjectRequest,
+      file: File
+    ): Promise<any> {
+      const formData = new FormData();
+      formData.append("file", file);
+    
+      // Agrega los campos del proyecto al formData
+      Object.entries(project).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+    
+      const response = await fetch(`${BASE_URL}/${userId}`, {
+        method: "POST",
+        body: formData,
+      });
+    
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || "Error creando el proyecto");
+      }
+    
+      return await response.json();
+    }
 
 }

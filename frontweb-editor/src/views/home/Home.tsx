@@ -14,28 +14,18 @@ const Home = () => {
   const [proyectos, setProyectos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null); 
-  
-  // Datos de ejemplo para los proyectos
-  // const proyectos = [
-  //   { id: 1, nombre: "Proyecto Alpha", descripcion: "Sistema de gestión de inventario", progreso: 75 },
-  //   { id: 2, nombre: "Proyecto Beta", descripcion: "Aplicación de seguimiento de tareas", progreso: 30 },
-  //   { id: 3, nombre: "Proyecto Gamma", descripcion: "Dashboard de analíticas", progreso: 50 },
-  //   { id: 4, nombre: "Proyecto Delta", descripcion: "Sistema de mensajería", progreso: 90 },
-  //   { id: 5, nombre: "Proyecto Epsilon", descripcion: "Plataforma de e-learning", progreso: 15 },
-  // ];
 
   
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const userId = getCurrentUser();
   useEffect(() => {
-    // Función para cargar los proyectos
     const fetchProjects = async () => {
       try {
         setLoading(true);
         const projects = await projectServices.getAllProjectsByUserId(userId!);
-        setProyectos(projects); // Guarda los proyectos en el estado
-        setError(null); // Limpia errores anteriores
+        setProyectos(projects);
+        setError(null); 
       } catch (err: any) {
         setError(err.message || 'Error al cargar los proyectos');
       } finally {
@@ -51,6 +41,8 @@ const Home = () => {
       setLoading(false);
     }
   }, [userId]);
+
+  
   
   const nextProject = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % proyectos.length);

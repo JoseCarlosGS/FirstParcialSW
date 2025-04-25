@@ -6,3 +6,8 @@ export interface Project {
     updated_at:string;
     is_owner:boolean;
 }
+
+export interface ProjectRequest {
+    name:string;
+    description:string;
+}

@@ -19,6 +19,7 @@ const sampleMessages: Message[] = [
 ];
 
 const ChatPanel: React.FC<any> = (projectId) => {
+  console.log(projectId)
   // Estados
   const [isOpen, setIsOpen] = useState(true);
   const [users, setUsers] = useState<User[] | undefined>(undefined);
@@ -27,7 +28,7 @@ const ChatPanel: React.FC<any> = (projectId) => {
   const messageEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (projectId !== null) {
+    if (projectId.project !== null) {
       const fetchUsers = async () => {
         try {
           const data = await ProjectServices.getAllUsersByProjectId(projectId.project);

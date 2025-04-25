@@ -3,8 +3,10 @@ import { useEditor } from '../../contexts/AppContext';
 import { User } from 'lucide-react';
 import { Settings } from 'lucide-react';
 import { LogOut } from 'lucide-react';
-import { logout } from '../../services/LoginServices';
+import { getCurrentUser, logout } from '../../services/LoginServices';
 import { useNavigate } from 'react-router-dom';
+import { ProjectServices } from '../../services/ProjectServices';
+import { ProjectRequest } from '../../interfaces/Project';
 
 
 const Navbar: React.FC = () => {
@@ -14,6 +16,7 @@ const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
+  const [showModalForm, setShowmodalForm] = useState(false)
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -31,6 +34,7 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log(editor)
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -68,9 +72,62 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const handleNewProject = () => {
+    setShowmodalForm(true)
+  }
+
   const handleImportClick = () => {
     console.log('Clic en Importar');
     fileInputRef.current?.click();
+  };
+
+  const sendToBackend = async (project: ProjectRequest) => {
+    if (!editor) return;
+    
+    try {
+      // Intenta obtener los datos del proyecto usando el método correcto
+      // GrapesJS Studio parece usar un método diferente para obtener los datos del proyecto
+      const data = await editor.Projects?.getCurrent()?.getData();
+      
+      // Si no existe, intenta con otras alternativas comunes en GrapesJS
+      const projectData = data || editor.getProjectData?.() || editor.Projects?.getProjectData?.();
+      
+      if (!projectData) {
+        console.error('No se pudieron obtener los datos del proyecto');
+        return;
+      }
+      
+      // Crear un archivo para descargar
+      const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+  
+      const file = new File([blob], `${project.name}.json` , { type: "application/json" });
+      const response = await ProjectServices.createProject(getCurrentUser()!, project, file)
+      
+      console.log('Proyecto exportado con éxito', response);
+      return response
+    } catch (error) {
+      console.error('Error al exportar el proyecto:', error);
+    }
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Previene el recargo de la página
+  
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name");
+    const description = formData.get("description");
+
+    const project = {
+      name:name as string,
+      description:description as string
+    }
+  
+    console.log("Datos del proyecto:", { name, description });
+
+    sendToBackend(project)
+    
+  
+    setShowmodalForm(false); // Cierra el modal si querés
   };
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,12 +186,12 @@ const Navbar: React.FC = () => {
       <div className="flex items-center space-x-3">
         <div className="text-lg font-semibold text-white">MiDashboard</div>
         <div className="inline-block relative">
-          <button
+          {editor && (<button
             onClick={toggleMenu}
             className="appearance-none text-white text-sm font-medium focus:outline-none bg-transparent"
           >
             Proyecto ▼
-          </button>
+          </button>)}
 
           {menuOpen && (
             <div className="absolute bg-gray-800 text-sm text-white mt-1.5 py-1 rounded shadow-lg z-50 w-36">
@@ -155,6 +212,15 @@ const Navbar: React.FC = () => {
                 className="px-3 py-1 hover:bg-gray-700 cursor-pointer"
               >
                 Exportar
+              </div>
+              <div
+                onClick={() => {
+                  handleNewProject();
+                  closeMenu();
+                }}
+                className="px-3 py-1 hover:bg-gray-700 cursor-pointer"
+              >
+                Guardar
               </div>
             </div>
           )}
@@ -195,6 +261,65 @@ const Navbar: React.FC = () => {
             </a>
           </div>
         )}
+
+        {showModalForm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            {/* Modal Container */}
+            <div className="bg-gray-800 text-white rounded-lg shadow-lg w-full max-w-md p-6">
+              {/* Título del Modal */}
+              <h2 className="text-xl font-bold mb-4">Nuevo proyecto</h2>
+
+              {/* Formulario */}
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                {/* Campo de Nombre */}
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium mb-1">
+                    Nombre
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Nombre del proyecto"
+                    className="w-full px-3 py-2 rounded-md border border-gray-600 bg-gray-700 text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                {/* Campo de Descripción */}
+                <div>
+                  <label htmlFor="description" className="block text-sm font-medium mb-1">
+                    Descripción
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    rows={4}
+                    placeholder="Describe tu proyecto..."
+                    className="w-full px-3 py-2 rounded-md border border-gray-600 bg-gray-700 text-white focus:outline-none focus:border-blue-500 resize-none"
+                  ></textarea>
+                </div>
+
+                {/* Botones de Acción */}
+                <div className="flex justify-end space-x-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowmodalForm(false)} // Cierra el modal
+                    className="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded-md transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-md transition-colors"
+                  >
+                    Guardar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   </nav>
