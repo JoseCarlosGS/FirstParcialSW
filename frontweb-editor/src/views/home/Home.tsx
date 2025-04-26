@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, PlusCircle} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../componets/Navbar';
+import Navbar from '../components/Navbar';
 import { AppProvider} from './../../contexts/AppContext';
 import { ProjectServices } from '../../services/ProjectServices';
 import { getCurrentUser } from '../../services/LoginServices';

@@ -15,6 +15,7 @@ export class ProjectServices {
           throw error;
         }
     }
+
     static async getAllProjectsByUserId(id:number): Promise<Project[]> {
         try {
           const response: AxiosResponse<Project[]> = await axios.get(`${BASE_URL}/projects?user_id=${id}`);
@@ -25,6 +26,17 @@ export class ProjectServices {
         }
     }
 
+    static async getProjectById(id:number): Promise<Project> {
+      try {
+        const response: AxiosResponse<Project> = await axios.get(`${BASE_URL}/${id}`);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching project by id:', error);
+        throw error;
+      }
+
+    }
+
     static async fetchProjectFile(id: number): Promise<any> {
       const response = await fetch(`${BASE_URL}/load?project_id=${id}`);
       if (!response.ok) {
@@ -33,17 +45,51 @@ export class ProjectServices {
       return await response.json();
     };
 
-    static async addUserToProject(id:number): Promise<User[]>{
+    static async addUserToProject(projectId:number, userId:number): Promise<any>{
       try{
-        const response : AxiosResponse<User[]> = await axios.get(`${BASE_URL}/projects?user_id=${id}`);
+        const response : AxiosResponse<User[]> = await axios.patch(`${BASE_URL}/add?user_id=${userId}&project_id=${projectId}`);
         return response.data;
       } catch (error) {
-        console.error('Error fetching users:', error);
+        console.error('Error adding to user:', error);
         throw error;
       }
     } 
+
+    static async removeUserToProject(projectId:number, userId:number): Promise<any>{
+      try{
+        const response : AxiosResponse<any> = await axios.patch(`${BASE_URL}/remove?user_id=${userId}&project_id=${projectId}`);
+        return response.data;
+      } catch (error) {
+        console.error('Error removing to user:', error);
+        throw error;
+      }
+    } 
+
     static async createProject(
       userId: number,
+      project: ProjectRequest,
+      file: File
+    ): Promise<any> {
+      const formData = new FormData();
+      formData.append("file", file);
+      Object.entries(project).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+      const response = await fetch(`${BASE_URL}/${userId}`, {
+        method: "POST",
+        body: formData,
+      });
+    
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || "Error creando el proyecto");
+      }
+    
+      return await response.json();
+    }
+
+    static async updateProject(
+      projectId: number,
       project: ProjectRequest,
       file: File
     ): Promise<any> {
@@ -55,8 +101,8 @@ export class ProjectServices {
         formData.append(key, value);
       });
     
-      const response = await fetch(`${BASE_URL}/${userId}`, {
-        method: "POST",
+      const response = await fetch(`${BASE_URL}/${projectId}`, {
+        method: "PUT",
         body: formData,
       });
     

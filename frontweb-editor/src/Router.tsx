@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './views/home/Home';
-import NotFound from './views/componets/NotFound';
+import NotFound from './views/components/NotFound';
 import Editor from './views/editor/components/Editor';
 import Login from './views/login/Login';
 import ProtectedRoute from './ProtectedRoute';

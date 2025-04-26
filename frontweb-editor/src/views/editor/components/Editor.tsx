@@ -4,19 +4,13 @@ import { Editor as GrapesjsEditor } from 'grapesjs';
 import io from 'socket.io-client';
 import 'grapesjs/dist/css/grapes.min.css';
 import { customBlocks } from '../../../constants/CustomBlocks';
-import Navbar from '../../componets/Navbar';
+import Navbar from '../../components/Navbar';
 import { AppProvider, useEditor} from '../../../contexts/AppContext';
 import ChatPanel from './ChatPanel';
 import GrapesEditor from './../components/GrapesEditor';
 import { useLocation } from 'react-router-dom';
 import { ProjectServices } from '../../../services/ProjectServices';
 
-
-// Tipo para los datos del proyecto (opcional, pero recomendado)
-interface ProjectData {
-  components: any; // Cambiado a 'any' para aceptar el tipo devuelto por editor.getComponents()
-  styles: string;
-}
 
 const Editor: React.FC = () => {
   const editorRef = useRef<HTMLDivElement | null>(null);
@@ -29,9 +23,11 @@ const Editor: React.FC = () => {
   //const socket = useRef(io('http://localhost:3000')); // Conexión a Socket.IO
 
   useEffect(() => {
+
     const id = queryParams.get('id');
     if (id) {
       setProjectId(parseInt(id));
+      sessionStorage.setItem('currentProject',id)
     }
     if (!editorRef.current) return;
 

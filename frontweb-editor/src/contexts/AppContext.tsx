@@ -1,10 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-// Definimos un tipo para el editor basado en lo que sabemos que necesitaremos
-// Se puede expandir según las necesidades específicas
 interface EditorInstance {
-  // Añade aquí las propiedades y métodos que necesitas usar
-  // Por ejemplo:
+
   Pages?: {
     getSelected: () => any;
   };
@@ -12,20 +9,16 @@ interface EditorInstance {
     loadProjectData: (data: any) => Promise<any>;
     getProjectData: () => any;
   };
-  // Añade más propiedades según las necesidades
-  [key: string]: any; // Permite acceso a cualquier propiedad desconocida
+  [key: string]: any; 
 }
 
-// Definir la interfaz para el valor del contexto
 interface AppContextType {
   editor: EditorInstance | null;
   setEditor: (editor: EditorInstance | null) => void;
 }
 
-// Crear el contexto con un valor inicial por defecto
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-// Props para el AppProvider
 interface AppProviderProps {
   children: ReactNode;
 }

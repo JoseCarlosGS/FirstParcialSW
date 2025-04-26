@@ -7,6 +7,7 @@ import { getCurrentUser, logout } from '../../services/LoginServices';
 import { useNavigate } from 'react-router-dom';
 import { ProjectServices } from '../../services/ProjectServices';
 import { ProjectRequest } from '../../interfaces/Project';
+import { Project } from '../../interfaces/Project';
 
 
 const Navbar: React.FC = () => {
@@ -16,7 +17,9 @@ const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
-  const [showModalForm, setShowmodalForm] = useState(false)
+  const [showModalForm, setShowmodalForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false)
+  const [currentProject, setCurrentProject] = useState<Project | null>(null)
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -35,9 +38,30 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     console.log(editor)
+    const idProject = sessionStorage.getItem('currentProject')
+    console.log('current: ', idProject)
+    if (idProject != null ){
+      setIsEditing(true)
+      fetchProject(parseInt(idProject))
+      setIsEditing(true)
+      
+    }
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (currentProject) {
+      //console.log('Proyecto actualizado:', currentProject);
+    }
+  }, [currentProject]);
+
+
+  const fetchProject = async (id:number) => {
+    const project = await ProjectServices.getProjectById(id)
+    setCurrentProject(project)
+  }
 
   const handleExport = async () => {
     if (!editor) return;
@@ -83,7 +107,7 @@ const Navbar: React.FC = () => {
 
   const sendToBackend = async (project: ProjectRequest) => {
     if (!editor) return;
-    
+    const id = sessionStorage.getItem('currentProject');
     try {
       // Intenta obtener los datos del proyecto usando el método correcto
       // GrapesJS Studio parece usar un método diferente para obtener los datos del proyecto
@@ -101,6 +125,11 @@ const Navbar: React.FC = () => {
       const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
   
       const file = new File([blob], `${project.name}.json` , { type: "application/json" });
+
+      if (id){
+        await ProjectServices.updateProject(parseInt(id), project, file)
+        return
+      }
       const response = await ProjectServices.createProject(getCurrentUser()!, project, file)
       
       console.log('Proyecto exportado con éxito', response);
@@ -110,7 +139,7 @@ const Navbar: React.FC = () => {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Previene el recargo de la página
   
     const formData = new FormData(e.currentTarget);
@@ -124,9 +153,9 @@ const Navbar: React.FC = () => {
   
     console.log("Datos del proyecto:", { name, description });
 
-    sendToBackend(project)
-    
-  
+    const response = await sendToBackend(project);
+    if (response)
+        sessionStorage.setItem('currentProject', response.data.id)
     setShowmodalForm(false); // Cierra el modal si querés
   };
 
@@ -267,7 +296,9 @@ const Navbar: React.FC = () => {
             {/* Modal Container */}
             <div className="bg-gray-800 text-white rounded-lg shadow-lg w-full max-w-md p-6">
               {/* Título del Modal */}
-              <h2 className="text-xl font-bold mb-4">Nuevo proyecto</h2>
+              {!isEditing? (<h2 className="text-xl font-bold mb-4">Nuevo proyecto</h2>):(
+                <h2 className="text-xl font-bold mb-4">Actualizar proyecto</h2>
+              )}
 
               {/* Formulario */}
               <form className="space-y-4" onSubmit={handleSubmit}>
@@ -276,13 +307,17 @@ const Navbar: React.FC = () => {
                   <label htmlFor="name" className="block text-sm font-medium mb-1">
                     Nombre
                   </label>
-                  <input
+                  {!isEditing ? (<input
                     type="text"
                     id="name"
                     name="name"
                     placeholder="Nombre del proyecto"
                     className="w-full px-3 py-2 rounded-md border border-gray-600 bg-gray-700 text-white focus:outline-none focus:border-blue-500"
-                  />
+                  />): (
+                    <label htmlFor="name" className="block text-sm font-medium mb-1">
+                      {currentProject?.name}
+                    </label>
+                  )}
                 </div>
 
                 {/* Campo de Descripción */}
@@ -290,13 +325,17 @@ const Navbar: React.FC = () => {
                   <label htmlFor="description" className="block text-sm font-medium mb-1">
                     Descripción
                   </label>
-                  <textarea
+                  {!isEditing ? (<textarea
                     id="description"
                     name="description"
                     rows={4}
                     placeholder="Describe tu proyecto..."
                     className="w-full px-3 py-2 rounded-md border border-gray-600 bg-gray-700 text-white focus:outline-none focus:border-blue-500 resize-none"
-                  ></textarea>
+                  ></textarea>):(
+                    <label htmlFor="name" className="block text-sm font-medium mb-1">
+                      {currentProject?.description}
+                    </label>
+                  )}
                 </div>
 
                 {/* Botones de Acción */}

@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { User } from '../interfaces/User';
 
-const BASE_URL = 'http://localhost:8000/api'
+const BASE_URL = 'http://localhost:8000/api/user'
   
   export interface LoginRequest {
     email: string;
@@ -41,6 +41,16 @@ const BASE_URL = 'http://localhost:8000/api'
     static async loginUser(credentials: LoginRequest): Promise<{ token: string }> {
       try {
         const response: AxiosResponse<{ token: string }> = await axios.post(`${BASE_URL}/login`, credentials);
+        return response.data;
+      } catch (error) {
+        console.error('Error logging in:', error);
+        throw error;
+      }
+    }
+
+    static async getByEmail(email:string): Promise<User> {
+      try {
+        const response: AxiosResponse<User> = await axios.get(`${BASE_URL}/get-by-email/${email}`);
         return response.data;
       } catch (error) {
         console.error('Error logging in:', error);

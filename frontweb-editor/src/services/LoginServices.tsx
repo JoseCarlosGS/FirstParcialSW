@@ -7,6 +7,7 @@ export const login = async (email: string, password: string) => {
         const response = await axios.post(`${API_URL}/login`, { email, password });
         sessionStorage.setItem('token', response.data.access_token)
         sessionStorage.setItem('user_id', response.data.user_id)
+        sessionStorage.setItem('user_email', response.data.user_email)
         return response.data; // Token or user data  
     } catch (error) {
         console.error('Login error:', error);
@@ -27,7 +28,8 @@ export const register = async (email: string, password: string) => {
 export const logout = () => {
     // Clear local storage or cookies
     sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user_id')
+    sessionStorage.removeItem('user_id');
+    sessionStorage.removeItem('user_email');
 };
 
 export const getCurrentUser = () => {
