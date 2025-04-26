@@ -20,9 +20,22 @@ async def get_all(UserService: UserService = Depends(get_user_service)) -> list[
     return UserService.get_all_users()
 
 @router.post("/")
-async def create(user: UserCreate, UserService: UserService = Depends(get_user_service))-> UserResponse:
+async def create(
+    user: UserCreate, 
+    UserService: UserService = Depends(get_user_service))-> UserResponse:
     try:
         user = UserService.create_user(user.model_dump())
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
     return user
+
+@router.get("/get-by-email/{email}")
+async def get_by_email(email: str, 
+    UserService: UserService = Depends(get_user_service))->UserResponse:
+    try:
+        user = UserService.get_user_by_email(email)
+        if not user:
+            raise HTTPException(status_code=404, detail={"error":"User not found"})
+        return user
+    except Exception as e:
+        raise e

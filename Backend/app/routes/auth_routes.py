@@ -27,7 +27,10 @@ async def login(credentials: LoginRequest, service: AuthService = Depends(get_au
         if not user:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
         access_token = service.create_access_token(data={"sub": user.email}, expires_delta=timedelta(minutes=120))
-        return TokenResponse(access_token=access_token, token_type="bearer", user_id=user.id)
+        return TokenResponse(access_token=access_token, 
+                             token_type="bearer", 
+                             user_id=user.id,
+                             user_email=user.email)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
     

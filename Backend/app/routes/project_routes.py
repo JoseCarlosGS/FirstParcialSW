@@ -35,10 +35,14 @@ async def get_all(user_id: int,
                   service: ProjectService = Depends(get_project_service))->list[ProjectResponse]:
     return service.get_all_by_user_id(user_id)
 
+
+    
+
 @router.get("/users")
 async def get_users(project_id: int,
                   service: ProjectService = Depends(get_project_service))->list[UserResponse]:
     return service.get_users_by_project(project_id)
+
 
 @router.post("/{user_id}")
 async def create_project(
@@ -129,10 +133,26 @@ async def load_project(
         filename=f"angular-project-{project_id}.zip"
     )
     
-@router.get("/add")
+@router.patch("/add")
 async def add_user_to_project(
     user_id:int,
     project_id: int, 
     service: ProjectService=Depends(get_project_service)
 ):
     return service.add_user_to_project(user_id, project_id)
+
+@router.patch("/remove")
+async def remove_user_to_project(
+    user_id:int,
+    project_id: int, 
+    service: ProjectService=Depends(get_project_service)
+):
+    return service.remove_user_from_project(user_id, project_id)
+
+
+@router.get("/{project_id}")
+async def get_by_id(
+    project_id: int,
+    service: ProjectService = Depends(get_project_service)
+    )->ProjectResponse:
+    return service.ger_project_by_id(project_id)

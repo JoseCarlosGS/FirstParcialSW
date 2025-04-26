@@ -43,14 +43,23 @@ class ProjectService:
         except ValueError as e:
             raise e
         
+    def ger_project_by_id(self, id:int)->Project:
+        try:
+            project = self.project_repo.get_project_by_id(id)
+            if not project: 
+                raise HTTPException(status_code=404, detail={"error":"Project not found"})
+            return project
+        except Exception as e:
+            raise e
+        
     def load_project_by_id(self, project_id: int):
         try:
             project = self.project_repo.get_project_by_id(project_id)
             if not project:
-                raise HTTPException(status_code=404, detail={"detail":"Project not found"})
+                raise HTTPException(status_code=404, detail={"error":"Project not found"})
             url = project.url
             return self._load_project_file(url) 
-        except ValueError as e:
+        except Exception as e:
             raise e
         
     def add_user_to_project(self, user_id: int, project_id: int)-> UserProjectLink:
@@ -58,25 +67,39 @@ class ProjectService:
             user = self.user_repo.get_user_by_id(user_id)
             project = self.project_repo.get_project_by_id(project_id)
             if not user or not project:
-                raise HTTPException(status_code=404, detail={"detail":"user or project not found"})
-            return self.project_repo.add_user_to_project(user_id=user.id, project_id=project.id, is_owner=False)
-        except ValueError as e:
+                raise HTTPException(status_code=404, detail={"error":"user or project not found"})
+            members = self.get_users_by_project(project_id)
+            
+            if user not in members:
+                return self.project_repo.add_user_to_project(user_id=user.id, project_id=project.id, is_owner=False)
+            else:
+                raise HTTPException(status_code=400, detail={"error":"User is member of this project"})
+        except Exception as e:
             raise e
         
     def get_all_by_user_id(self, user_id:int)->List[dict]:
         if not self.user_repo.get_user_by_id(user_id):
-            raise HTTPException(status_code=404, detail={"detail":"user not found"}) 
+            raise HTTPException(status_code=404, detail={"error":"user not found"}) 
         return self.project_repo.get_projects_by_user(user_id)
         
     def get_users_by_project(self, project_id:int)->List[User]:
         if not self.project_repo.get_project_by_id(project_id):
-            return HTTPException(status_code=404, detail={"detail":"project not found"})
+            return HTTPException(status_code=404, detail={"error":"project not found"})
         return self.project_repo.get_users_by_project(project_id)
     
     def remove_user_from_project(self, user_id:int, project_id:int)->bool:
         try:
-            return self.project_repo.deactivate_user_in_project(user_id, project_id)        
-        except ValueError as e:
+            user = self.user_repo.get_user_by_id(user_id)
+            project = self.project_repo.get_project_by_id(project_id)
+            if not user or not project:
+                raise HTTPException(status_code=404, detail={"error":"User or project not found"})
+            
+            members = self.get_users_by_project(project_id)
+            if user in members:
+                return self.project_repo.deactivate_user_in_project(user_id=user.id, project_id=project.id)
+            else:
+                raise HTTPException(status_code=400, detail={"error":"User is not member of this project"})      
+        except Exception as e:
             raise e
         
     def _save_project_file(self, file: UploadFile) -> str:

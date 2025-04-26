@@ -6,7 +6,7 @@ from fastapi import HTTPException, Response
 
 from ..schemas.proyect_schemas import ProjectSchema
 from ..services.template_engine import TemplateEngine
-from ..services.component_generator import ComponentGenerator
+from .utils.component_generator import ComponentGenerator
 from ..services.strategies.generate_strategies import GenerateProjectStrategy, GenerateByCommand
 from ..services.strategies.generate_code import DefaultCodeGenerationStrategy
 from ..models.project import Project

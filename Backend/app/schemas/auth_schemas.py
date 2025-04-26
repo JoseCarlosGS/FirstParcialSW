@@ -8,3 +8,4 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user_id: int
+    user_email: EmailStr

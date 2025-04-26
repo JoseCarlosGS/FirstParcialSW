@@ -1,6 +1,6 @@
 import os
 from typing import Dict, Any, List
-from .template_engine import TemplateEngine
+from ..template_engine import TemplateEngine
 
 class ComponentGenerator:
     def __init__(self):

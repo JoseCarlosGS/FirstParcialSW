@@ -1,5 +1,10 @@
+from datetime import datetime
+import json
+import uuid
 from fastapi import APIRouter, WebSocketDisconnect, WebSocket
 from fastapi.responses import HTMLResponse
+
+from ..services.socket_services import ConnectionManager, message_history
 
 router = APIRouter(prefix="/socket", tags=["sockets"])
 
@@ -40,40 +45,42 @@ html = """
 </html>
 """
 
-
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: list[WebSocket] = []
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
-    async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
-
-    async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
-
-
 manager = ConnectionManager()
 
 @router.get("/")
 async def get():
     return HTMLResponse(html)
 
-@router.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: int):
-    await manager.connect(websocket)
+@router.websocket("/ws/{user_id}/{user_email}")
+async def websocket_endpoint(websocket: WebSocket, user_id: int, user_email:str):
+    print(f"Cliente conectado: {user_email} (ID: {user_id})")
+    await manager.connect(websocket, user_id, user_email)
     try:
         while True:
             data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{client_id} says: {data}")
+            print(f"Mensaje recibido de {user_email}: {data}")
+            message_data = json.loads(data)
+            
+            # Crear nuevo mensaje
+            new_message = {
+                "id": str(uuid.uuid4()),
+                "userId": user_id,
+                "text": message_data["text"],
+                "timestamp": datetime.now().isoformat()
+            }
+            print(f"Nuevo mensaje creado: {new_message}")
+            
+            # Guardar en historial
+            message_history.append(new_message)
+            if len(message_history) > 100:  # Limitar historial a 100 mensajes
+                message_history.pop(0)
+            
+            # Broadcast del mensaje a todos los clientes
+            await manager.broadcast(json.dumps({
+                "type": "message",
+                "data": new_message
+            }))
+            
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_id} left the chat")
+        manager.disconnect(user_id)
+        await manager.broadcast_user_list()

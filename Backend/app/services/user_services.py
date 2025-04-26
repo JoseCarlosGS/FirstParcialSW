@@ -38,7 +38,10 @@ class UserService:
         """
         Obtiene un usuario por su correo electrónico.
         """
-        return self.user_repository.get_user_by_email(email)
+        user = self.user_repository.get_user_by_email(email)
+        if not user:
+            return None
+        return user    
 
     def get_all_users(self) -> List[User]:
         """
