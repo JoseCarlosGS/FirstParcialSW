@@ -1,86 +1,73 @@
 from datetime import datetime
 import json
 import uuid
-from fastapi import APIRouter, WebSocketDisconnect, WebSocket
+from fastapi import APIRouter, Depends, WebSocketDisconnect, WebSocket
 from fastapi.responses import HTMLResponse
+from sqlmodel import Session
+from ..database import get_session as get_db
 
 from ..services.socket_services import ConnectionManager, message_history
 
 router = APIRouter(prefix="/socket", tags=["sockets"])
 
-html = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <h2>Your ID: <span id="ws-id"></span></h2>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var client_id = Date.now()
-            document.querySelector("#ws-id").textContent = client_id;
-            var ws = new WebSocket(`ws://localhost:8000/api/socket/ws/${client_id}`);
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
-
 manager = ConnectionManager()
+
+def get_connection_manager():
+    return manager
+
+#manager = ConnectionManager()
 
 @router.get("/")
 async def get():
-    return HTMLResponse(html)
+    return HTMLResponse("html")
 
-@router.websocket("/ws/{user_id}/{user_email}")
-async def websocket_endpoint(websocket: WebSocket, user_id: int, user_email:str):
-    print(f"Cliente conectado: {user_email} (ID: {user_id})")
-    await manager.connect(websocket, user_id, user_email)
+@router.websocket("/ws/{client_id}/{username}")
+async def websocket_endpoint(
+    websocket: WebSocket, 
+    client_id: str, 
+    username: str,
+    db: Session = Depends(get_db)):
+    
+    # Usar la misma instancia del ConnectionManager para todos los clientes
+    manager = get_connection_manager()
+    await manager.connect(websocket, client_id, username, db)
+    
     try:
         while True:
             data = await websocket.receive_text()
-            print(f"Mensaje recibido de {user_email}: {data}")
             message_data = json.loads(data)
             
-            # Crear nuevo mensaje
-            new_message = {
-                "id": str(uuid.uuid4()),
-                "userId": user_id,
-                "text": message_data["text"],
-                "timestamp": datetime.now().isoformat()
-            }
-            print(f"Nuevo mensaje creado: {new_message}")
+            message_type = message_data.get("type")
             
-            # Guardar en historial
-            message_history.append(new_message)
-            if len(message_history) > 100:  # Limitar historial a 100 mensajes
-                message_history.pop(0)
+            if message_type == "chat-message":
+                # Mensaje de chat
+                new_message = {
+                    "id": str(uuid.uuid4()),
+                    "userId": client_id,
+                    "text": message_data["text"],
+                    "timestamp": datetime.now().isoformat()
+                }
+                message_history.append(new_message)
+                if len(message_history) > 100:
+                    message_history.pop(0)
+                
+                await manager.broadcast(json.dumps({
+                    "type": "message",
+                    "data": new_message
+                }))
             
-            # Broadcast del mensaje a todos los clientes
-            await manager.broadcast(json.dumps({
-                "type": "message",
-                "data": new_message
-            }))
+            elif message_type == "editor-update":
+                # Actualización del editor
+                editor_data = message_data.get("data")
+                print(f"Editor update recibida: {editor_data}")
+                
+                # Broadcast de la actualización
+                await manager.broadcast(json.dumps({
+                    "type": "editor-update",
+                    "data": editor_data,
+                    "userId": client_id
+                }))
             
     except WebSocketDisconnect:
-        manager.disconnect(user_id)
+        manager.disconnect(client_id)
         await manager.broadcast_user_list()
