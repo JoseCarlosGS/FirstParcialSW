@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { ProjectServices } from '../../services/ProjectServices';
 import { ProjectRequest } from '../../interfaces/Project';
 import { Project } from '../../interfaces/Project';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 
 const Navbar: React.FC = () => {
@@ -20,6 +21,7 @@ const Navbar: React.FC = () => {
   const [showModalForm, setShowmodalForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false)
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
+  const [showAlert, setShowAlert] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -154,8 +156,9 @@ const Navbar: React.FC = () => {
     console.log("Datos del proyecto:", { name, description });
 
     const response = await sendToBackend(project);
+    console.log('respuesta al crear:',response)
     if (response)
-        sessionStorage.setItem('currentProject', response.data.id)
+        sessionStorage.setItem('currentProject', response.data.id_project)
     setShowmodalForm(false); // Cierra el modal si querés
   };
 
@@ -208,12 +211,23 @@ const Navbar: React.FC = () => {
     navigate('/login')
   }
 
+  const redirectToHome = () => {
+    navigate('/')
+  }
+
   return (
     <nav className="bg-gray-900 text-white px-4 py-1.5 relative z-50 border-b border-gray-800 border-radius-2">
     <div className="flex items-center justify-between h-12">
       {/* Izquierda: Logo y menú Proyecto */}
       <div className="flex items-center space-x-3">
+      <a href="#"
+      onClick={(e) => {
+        e.preventDefault(); // evita que recargue o navegue
+        setShowAlert(true); // mostramos tu modal
+      }}
+      > 
         <div className="text-lg font-semibold text-white">MiDashboard</div>
+      </a>
         <div className="inline-block relative">
           {editor && (<button
             onClick={toggleMenu}
@@ -361,6 +375,12 @@ const Navbar: React.FC = () => {
 
       </div>
     </div>
+        <ConfirmationModal
+          isOpen={showAlert}
+          onConfirm={redirectToHome}
+          onCancel={() => setShowAlert(false)}
+          message="¿Estás seguro que deseas vovler al inicio? Podria perder los cambios que no han sido guardados."
+        />
   </nav>
 
   );

@@ -10,7 +10,7 @@ const GrapesEditor = () => {
     const handleEditorReady = (editorInstance:any) => {
         // Guardar la instancia del editor en el contexto
         setEditor(editorInstance);
-        console.log('Editor listo y guardado en contexto: ', editorInstance);
+        //console.log('Editor listo y guardado en contexto: ', editorInstance);
     };
 
 return(

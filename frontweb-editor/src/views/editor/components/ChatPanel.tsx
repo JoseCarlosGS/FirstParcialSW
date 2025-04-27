@@ -16,15 +16,6 @@ interface Message {
   timestamp: Date;
 }
 
-const sampleMessages: Message[] = [
-  // { id: '1', userId: '1', text: 'Hola a todos, estoy editando la sección de navegación', timestamp: new Date('2025-04-21T11:30:00') },
-  // { id: '2', userId: '3', text: 'Yo estoy trabajando en el footer', timestamp: new Date('2025-04-21T11:32:00') },
-  // { id: '3', userId: '2', text: 'Acabo de terminar el diseño del header', timestamp: new Date('2025-04-21T11:35:00') },
-  // { id: '1', userId: '1', text: 'Hola a todos, estoy editando la sección de navegación', timestamp: new Date('2025-04-21T11:30:00') },
-  // { id: '2', userId: '3', text: 'Yo estoy trabajando en el footer', timestamp: new Date('2025-04-21T11:32:00') },
-  // { id: '3', userId: '2', text: 'Acabo de terminar el diseño del header', timestamp: new Date('2025-04-21T11:35:00') },
-];
-
 const ChatPanel: React.FC<any> = (projectId) => {
   // Estados
   const [isOpen, setIsOpen] = useState(true);
@@ -39,16 +30,16 @@ const ChatPanel: React.FC<any> = (projectId) => {
   const [error, setError] = useState('')
   const [showAlert, setShowAlert] = useState(false);
   const [deleteUser, setDeteleUser] = useState<User | null>(null);
+  const [isSaved, setIsSaved] = useState(false)
+  const [onlineUsers, setOnlineUsers] = useState<User[] | undefined>(undefined);
 
   const [userId] = useState(() => {
     const storedId = sessionStorage.getItem('user_id');
-    console.log(storedId)
     if (storedId) return storedId;
   });
   
   const [userEmail] = useState(() => {
     const storedName = sessionStorage.getItem('user_email');
-    console.log(storedName)
     if (storedName) return storedName;
   });
 
@@ -69,33 +60,33 @@ const ChatPanel: React.FC<any> = (projectId) => {
 
   useEffect(() => {
     if (lastMessage !== null) {
-      console.log("Mensaje recibido del servidor:", lastMessage);
       try {
         const data = JSON.parse(lastMessage.data);
-        console.log(data)
-        switch (data.type) {
-          case 'message':
-            setMessages(prevMessages => [...prevMessages, data.data]);
-            break;
-          case 'users':
-            setUsers(data.data);
-            break;
-          case 'history':
-            setMessages(data.data);
-            break;
-          default:
-            console.log('Mensaje desconocido:', data);
+        console.log("Mensaje recibido:", lastMessage.data);
+        if (data.type === 'users') {
+          //setUsers(data.data);
+          setOnlineUsers(data.data);
+        }
+        // Esperar a procesar mensajes solo cuando tengamos la lista de usuarios
+        else if (data.type === 'message') {
+          setMessages(prevMessages => [...prevMessages, data.data]);
+        }
+        else if (data.type === 'history') {
+          setMessages(data.data);
         }
       } catch (error) {
         console.error('Error al parsear el mensaje:', error);
       }
     }
-  }, [lastMessage]);
+  }, [lastMessage, users]);
 
   useEffect(() => {
-    if (projectId.project !== null) {
+    const current = sessionStorage.getItem('currentProject')
+    if (projectId.project !== null || current !== null) {
       fetchUsers();
+      setIsSaved(true)
     }
+
   }, [projectId]);
 
   const fetchUsers = async () => {
@@ -120,6 +111,7 @@ const ChatPanel: React.FC<any> = (projectId) => {
     if (newMessage.trim() === '') return;
     
     const messageToSend = {
+      type: "chat-message",
       text: newMessage.trim()
     };
     console.log("Enviando mensaje:", messageToSend);
@@ -187,6 +179,12 @@ const ChatPanel: React.FC<any> = (projectId) => {
     }
   };
 
+  const isOnline = (user:User) => {
+    if (!user) return false; // Verifica que el usuario no sea nulo
+    // Busca si algún objeto en onlineUsers tiene el mismo id que user.id
+    return onlineUsers!.some(onlineUser => onlineUser.id === user.id);
+  };
+
     return (
       <div className="h-full relative z-20">
       {/* Botón fijo a la izquierda de la pantalla */}
@@ -220,26 +218,32 @@ const ChatPanel: React.FC<any> = (projectId) => {
           </div>
 
           {/* Sección de usuarios */}
-          <div className="flex-1 p-3 border-b border-gray-200 min-h-60">
+          <div className="flex-1 p-3 border-b border-gray-200 min-h-60 max-h-60">
             <div className="flex items-center justify-between mb-4">
               {/* Título con ícono */}
               <h2 className="font-semibold text-white flex items-center">
                 <UserCircle className="mr-2" size={18} />
-                Miembros ({users?.filter((u) => u.is_active).length}/{users?.length})
+                Miembros ({users?.filter((u) => u.online).length}/{users?.length})
               </h2>
 
               {/* Botón más pequeño y alineado a la derecha */}
-                <button
+              <button
                 type="button"
                 onClick={() => {
                   setShowAddUserModal(true);
                   setError('');
                 }}
-                className="flex items-center text-xs text-gray-400 hover:text-white hover:bg-gray-700 font-medium rounded-md px-2 py-1 space-x-1 transition-colors"
-                >
+                disabled={!isSaved}
+                title={!isSaved ? "Debe guardar el proyecto para poder añadir colaboradores" : ""}
+                className={`flex items-center text-xs font-medium rounded-md px-2 py-1 space-x-1 transition-colors
+                  ${isSaved 
+                    ? "text-gray-400 hover:text-white hover:bg-gray-700" 
+                    : "text-gray-600 bg-gray-800 cursor-not-allowed"}
+                `}
+              >
                 <Plus size={14} />
                 <span>Añadir</span>
-                </button>
+              </button>
             </div>
 
             <div className="max-h-48 overflow-y-auto">
@@ -257,14 +261,14 @@ const ChatPanel: React.FC<any> = (projectId) => {
                       </div>
                       <span
                         className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${
-                          user.is_active ? "bg-green-500" : "bg-gray-400"
+                          isOnline(user) ? "bg-green-500" : "bg-gray-400"
                         }`}
                       />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-gray-200 truncate">{user.name}</p>
                       <p className="text-xs text-gray-500">
-                        {user.is_active
+                        {isOnline(user)
                           ? "En línea"
                           : formatLastSeen(user.last_login ? new Date(user.last_login) : undefined)}
                       </p>
@@ -287,7 +291,7 @@ const ChatPanel: React.FC<any> = (projectId) => {
           </div>
 
           {/* Sección de chat */}
-          <div className="flex-1 flex flex-col overflow-hidden p-3 bg-gray-900 min-h-95">
+          <div className="flex-1 flex flex-col overflow-hidden p-3 bg-gray-900 min-h-95 max-h-95">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-white flex items-center">
                 <MessageSquare className="mr-2" size={18} />
@@ -301,11 +305,11 @@ const ChatPanel: React.FC<any> = (projectId) => {
                 const messageUserId = String(message.userId);
                 const currentUserId = String(userId);
                 const user = users?.find((u) => u.id.toString() === message.userId);
-                console.log(message)
-                console.log(userId)
-                console.log(user)
+                //console.log(message)
+                //console.log(userId)
+                //console.log(user)
                 const isCurrentUser = messageUserId === currentUserId;
-                console.log(isCurrentUser)
+                //console.log(isCurrentUser)
 
                 return (
                   <div

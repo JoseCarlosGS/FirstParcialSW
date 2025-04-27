@@ -42,7 +42,11 @@ const Home = () => {
     }
   }, [userId]);
 
-  
+  const newProject = () => {
+    localStorage.removeItem('gjsProject')
+    sessionStorage.removeItem('currentProject')
+    navigate('/editor')
+  }
   
   const nextProject = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % proyectos.length);
@@ -69,7 +73,7 @@ const Home = () => {
           <h1 className="text-2xl font-bold text-gray-100">Mis Proyectos</h1>
           <button
             className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors"
-            onClick={() => navigate('/editor')}
+            onClick={() => newProject()}
           >
             <PlusCircle size={20} className="mr-2" />
             Nuevo Proyecto
