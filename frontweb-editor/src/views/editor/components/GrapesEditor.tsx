@@ -11,6 +11,17 @@ const GrapesEditor = () => {
         // Guardar la instancia del editor en el contexto
         setEditor(editorInstance);
         //console.log('Editor listo y guardado en contexto: ', editorInstance);
+        editorInstance.on('component:add', (component: any) => {
+            //console.log("Nuevo componente añadido:", component);
+      
+            // sendMessage(JSON.stringify({
+            //   type: "editor-update",
+            //   data: {
+            //     action: "add",
+            //     component: component.toJSON()  // Envía el componente agregado
+            //   }
+            // }));
+          });
     };
 
 return(

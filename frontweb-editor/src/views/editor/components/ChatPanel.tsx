@@ -28,10 +28,12 @@ const ChatPanel: React.FC<any> = (projectId) => {
   const [foundUser, setFoundUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [currentProjectId, setCurrentProjectId] = useState(Number)
   const [showAlert, setShowAlert] = useState(false);
   const [deleteUser, setDeteleUser] = useState<User | null>(null);
   const [isSaved, setIsSaved] = useState(false)
   const [onlineUsers, setOnlineUsers] = useState<User[] | undefined>(undefined);
+  //const { sendMessage, lastChatMessage, onlineUsers, messageHistory, readyState } = useWebSocketContext();
 
   const [userId] = useState(() => {
     const storedId = sessionStorage.getItem('user_id');
@@ -82,17 +84,22 @@ const ChatPanel: React.FC<any> = (projectId) => {
 
   useEffect(() => {
     const current = sessionStorage.getItem('currentProject')
-    if (projectId.project !== null || current !== null) {
-      fetchUsers();
+    if (current !== null) {
+      setCurrentProjectId(parseInt(current))
       setIsSaved(true)
     }
+  }, []);
 
-  }, [projectId]);
+  useEffect(() => {
+    if (currentProjectId !== null && currentProjectId !== 0) {
+      fetchUsers();
+    }
+  }, [currentProjectId]);
 
   const fetchUsers = async () => {
     try {
-      const data = await ProjectServices.getAllUsersByProjectId(projectId.project);
-      setUsers(data);
+        const data = await ProjectServices.getAllUsersByProjectId(currentProjectId);
+        setUsers(data);
     } catch (error) {
       console.error('Error al obtener usuarios:', error);
     }
@@ -180,8 +187,7 @@ const ChatPanel: React.FC<any> = (projectId) => {
   };
 
   const isOnline = (user:User) => {
-    if (!user) return false; // Verifica que el usuario no sea nulo
-    // Busca si algún objeto en onlineUsers tiene el mismo id que user.id
+    if (!user || onlineUsers === undefined) return false; 
     return onlineUsers!.some(onlineUser => onlineUser.id === user.id);
   };
 

@@ -91,10 +91,11 @@ const Editor: React.FC = () => {
         setErrorMessage("No se encontró un método válido para cargar el proyecto.");
       }
   
-      console.log("Proyecto importado desde el backend con éxito");
+      //console.log("Proyecto importado desde el backend con éxito");
+      setErrorMessage(null)
     } catch (error) {
       console.error("Error al importar el archivo desde el servidor:", error);
-      setErrorMessage("Hubo un error al cargar el proyecto.");
+      //setErrorMessage("Hubo un error al cargar el proyecto.");
     } finally {
       setIsLoading(false);
     }

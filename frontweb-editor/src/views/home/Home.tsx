@@ -20,6 +20,7 @@ const Home = () => {
 
   const userId = getCurrentUser();
   useEffect(() => {
+    sessionStorage.removeItem('currentProject')
     const fetchProjects = async () => {
       try {
         setLoading(true);
@@ -58,6 +59,7 @@ const Home = () => {
   
   const editProject = (id:number) => {
     console.log('cargando el proyecto: ', id)
+    sessionStorage.setItem('currentProject', id.toString())
     navigate(`/editor?id=${id}`);
   };
   
