@@ -2,26 +2,30 @@ import StudioEditor from '@grapesjs/studio-sdk/react';
 import '@grapesjs/studio-sdk/style';
 import { useEditor } from '../../../contexts/AppContext';
 import { useEffect } from 'react';
+import { useWebSocketContext } from '../../../contexts/WebSocketContext';
 
 // ...
 const GrapesEditor = () => {
     const { setEditor } = useEditor();
+    const socket = useWebSocketContext();
     
     const handleEditorReady = (editorInstance:any) => {
         // Guardar la instancia del editor en el contexto
         setEditor(editorInstance);
         //console.log('Editor listo y guardado en contexto: ', editorInstance);
         editorInstance.on('component:add', (component: any) => {
-            //console.log("Nuevo componente añadido:", component);
-      
-            // sendMessage(JSON.stringify({
-            //   type: "editor-update",
-            //   data: {
-            //     action: "add",
-            //     component: component.toJSON()  // Envía el componente agregado
-            //   }
-            // }));
-          });
+            console.log("Nuevo componente añadido:", component);
+
+            if (socket?.sendMessage) {
+                socket.sendMessage(JSON.stringify({
+                type: "editor-update",
+                data: {
+                    action: "add",
+                    component: component.toJSON()
+                }
+                }));
+            }
+        });
     };
 
 return(

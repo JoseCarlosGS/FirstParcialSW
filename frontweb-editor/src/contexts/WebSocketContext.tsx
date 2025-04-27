@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import useWebSocket, { ReadyState, SendMessage  } from 'react-use-websocket';
+import { useEditor } from './AppContext';
 
 interface IWebSocketContext {
     sendMessage: SendMessage;
@@ -14,6 +15,7 @@ const WebSocketContext = createContext<IWebSocketContext | null>(null);
 import { ReactNode } from 'react';
 
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
+  const { editor } = useEditor(); 
   const [userId] = useState(() => sessionStorage.getItem('user_id'));
   const [userEmail] = useState(() => sessionStorage.getItem('user_email'));
 
@@ -33,12 +35,16 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
       reconnectInterval: 3000,
     }
   );
+  type IncomingMessage = {
+    type: 'users' | 'message' | 'history' | 'editor-update';
+    data: any;
+  };
 
   useEffect(() => {
     console.log(lastMessage)
     if (lastMessage !== null) {
       try {
-        const data = JSON.parse(lastMessage.data);
+        const data : IncomingMessage = JSON.parse(lastMessage.data);
         console.log("Mensaje recibido:", data);
 
         if (data.type === 'users') {
@@ -50,12 +56,26 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
         else if (data.type === 'history') {
           setMessageHistory(data.data); // 👈 historial de mensajes
         }
+        else if (data.type === 'editor-update') {
+          handleEditorUpdate(data.data);  // <<< nueva función que debes crear
+        }
 
       } catch (error) {
         console.error('Error al parsear mensaje:', error);
       }
     }
   }, [lastMessage]);
+
+  const handleEditorUpdate = (update: any) => {
+    if (!editor) return;
+  
+    if (update.action === 'add') {
+      console.log('Recibiendo nuevo componente para añadir:', update.component);
+      editor.addComponents(update.component);
+    }
+  
+    // Puedes después manejar más acciones: delete, update, move, etc.
+  };
 
   return (
     <WebSocketContext.Provider value={{ 

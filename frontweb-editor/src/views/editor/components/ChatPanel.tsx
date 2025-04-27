@@ -5,7 +5,6 @@ import { User } from '../../../interfaces/User';
 import { UserServices } from '../../../services/UserServices';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getCurrentUser } from '../../../services/LoginServices';
-import useWebSocket from 'react-use-websocket';
 import { useWebSocketContext } from '../../../contexts/WebSocketContext';
 
 // Definición de tipos
@@ -49,10 +48,10 @@ const ChatPanel: React.FC<any> = (projectId) => {
     if (storedId) return storedId;
   });
 
-  const [userEmail] = useState(() => {
-    const storedName = sessionStorage.getItem('user_email');
-    if (storedName) return storedName;
-  });
+  // const [userEmail] = useState(() => {
+  //   const storedName = sessionStorage.getItem('user_email');
+  //   if (storedName) return storedName;
+  // });
 
   // const { sendMessage, lastMessage, readyState } = useWebSocket(
   //   `ws://localhost:8000/api/socket/ws/${userId}/${userEmail}`,
