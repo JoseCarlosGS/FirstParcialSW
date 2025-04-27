@@ -6,6 +6,7 @@ import { UserServices } from '../../../services/UserServices';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getCurrentUser } from '../../../services/LoginServices';
 import useWebSocket from 'react-use-websocket';
+import { useWebSocketContext } from '../../../contexts/WebSocketContext';
 
 // Definición de tipos
 
@@ -32,55 +33,73 @@ const ChatPanel: React.FC<any> = (projectId) => {
   const [showAlert, setShowAlert] = useState(false);
   const [deleteUser, setDeteleUser] = useState<User | null>(null);
   const [isSaved, setIsSaved] = useState(false)
-  const [onlineUsers, setOnlineUsers] = useState<User[] | undefined>(undefined);
+  //const [onlineUsers, setOnlineUsers] = useState<User[] | undefined>(undefined);
+
   //const { sendMessage, lastChatMessage, onlineUsers, messageHistory, readyState } = useWebSocketContext();
+  const socketContext = useWebSocketContext();
+
+  if (!socketContext) {
+    return <div>Cargando conexión...</div>; // O puedes mostrar un loader/spinner
+  }
+
+  const { sendMessage, lastChatMessage, onlineUsers, messageHistory, readyState } = socketContext;
 
   const [userId] = useState(() => {
     const storedId = sessionStorage.getItem('user_id');
     if (storedId) return storedId;
   });
-  
+
   const [userEmail] = useState(() => {
     const storedName = sessionStorage.getItem('user_email');
     if (storedName) return storedName;
   });
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(
-    `ws://localhost:8000/api/socket/ws/${userId}/${userEmail}`,
-    {
-      onOpen: () => {
-        console.log('WebSocket conectado');
-      },
-      onError: (event) => {
-        console.error('Error de WebSocket:', event);
-      },
-      shouldReconnect: () => true,
-      reconnectAttempts: 10,
-      reconnectInterval: 3000,
-    }
-  );
+  // const { sendMessage, lastMessage, readyState } = useWebSocket(
+  //   `ws://localhost:8000/api/socket/ws/${userId}/${userEmail}`,
+  //   {
+  //     onOpen: () => {
+  //       console.log('WebSocket conectado');
+  //     },
+  //     onError: (event) => {
+  //       console.error('Error de WebSocket:', event);
+  //     },
+  //     shouldReconnect: () => true,
+  //     reconnectAttempts: 10,
+  //     reconnectInterval: 3000,
+  //   }
+  // );
 
+  // useEffect(() => {
+  //   if (lastMessage !== null) {
+  //     try {
+  //       const data = JSON.parse(lastMessage.data);
+  //       console.log("Mensaje recibido:", lastMessage.data);
+  //       if (data.type === 'users') {
+  //         //setUsers(data.data);
+  //         setOnlineUsers(data.data);
+  //       }
+  //       // Esperar a procesar mensajes solo cuando tengamos la lista de usuarios
+  //       else if (data.type === 'message') {
+  //         setMessages(prevMessages => [...prevMessages, data.data]);
+  //       }
+  //       else if (data.type === 'history') {
+  //         setMessages(data.data);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error al parsear el mensaje:', error);
+  //     }
+  //   }
+  // }, [lastMessage, users]);
+  // Cada vez que llega un nuevo mensaje, actualizar mensajes
   useEffect(() => {
-    if (lastMessage !== null) {
-      try {
-        const data = JSON.parse(lastMessage.data);
-        console.log("Mensaje recibido:", lastMessage.data);
-        if (data.type === 'users') {
-          //setUsers(data.data);
-          setOnlineUsers(data.data);
-        }
-        // Esperar a procesar mensajes solo cuando tengamos la lista de usuarios
-        else if (data.type === 'message') {
-          setMessages(prevMessages => [...prevMessages, data.data]);
-        }
-        else if (data.type === 'history') {
-          setMessages(data.data);
-        }
-      } catch (error) {
-        console.error('Error al parsear el mensaje:', error);
-      }
-    }
-  }, [lastMessage, users]);
+    //console.log(lastChatMessage)
+    setMessages(prev => [...prev, lastChatMessage]);
+  }, [lastChatMessage]);
+
+  // Al iniciar, cargar el historial
+  useEffect(() => {
+    setMessages(messageHistory);
+  }, [messageHistory]);
 
   useEffect(() => {
     const current = sessionStorage.getItem('currentProject')
@@ -116,13 +135,13 @@ const ChatPanel: React.FC<any> = (projectId) => {
 
   const handleSendMessage = () => {
     if (newMessage.trim() === '') return;
-    
+
     const messageToSend = {
       type: "chat-message",
       text: newMessage.trim()
     };
     console.log("Enviando mensaje:", messageToSend);
-    
+
     sendMessage(JSON.stringify(messageToSend));
     setNewMessage('');
   };
@@ -134,20 +153,20 @@ const ChatPanel: React.FC<any> = (projectId) => {
 
   const formatLastSeen = (date?: Date) => {
     if (!date) return 'Desconectado';
-    
+
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.round(diffMs / 60000);
-    
+
     if (diffMins < 1) return 'Hace un momento';
     if (diffMins < 60) return `Hace ${diffMins} min`;
-    
+
     return formatTime(date);
   };
 
   const searchUser = async (email: string) => {
     setError('')
-    try{const user = await UserServices.getByEmail(email); 
+    try{const user = await UserServices.getByEmail(email);
     setFoundUser(user);}
     catch (error){
       setError(error as string)
@@ -171,9 +190,9 @@ const ChatPanel: React.FC<any> = (projectId) => {
     if (foundUser) {
       setIsLoading(true)
       try{
-        await ProjectServices.addUserToProject(projectId.project, foundUser.id); 
+        await ProjectServices.addUserToProject(projectId.project, foundUser.id);
       }
-      catch (error){ 
+      catch (error){
         setError(error as string)
       }
       finally{
@@ -187,7 +206,7 @@ const ChatPanel: React.FC<any> = (projectId) => {
   };
 
   const isOnline = (user:User) => {
-    if (!user || onlineUsers === undefined) return false; 
+    if (!user || onlineUsers === undefined) return false;
     return onlineUsers!.some(onlineUser => onlineUser.id === user.id);
   };
 
@@ -242,8 +261,8 @@ const ChatPanel: React.FC<any> = (projectId) => {
                 disabled={!isSaved}
                 title={!isSaved ? "Debe guardar el proyecto para poder añadir colaboradores" : ""}
                 className={`flex items-center text-xs font-medium rounded-md px-2 py-1 space-x-1 transition-colors
-                  ${isSaved 
-                    ? "text-gray-400 hover:text-white hover:bg-gray-700" 
+                  ${isSaved
+                    ? "text-gray-400 hover:text-white hover:bg-gray-700"
                     : "text-gray-600 bg-gray-800 cursor-not-allowed"}
                 `}
               >
@@ -424,7 +443,7 @@ const ChatPanel: React.FC<any> = (projectId) => {
                     Añadir al proyecto
                   </button>
                   )}
-                  
+
                 </div>
               )}
 

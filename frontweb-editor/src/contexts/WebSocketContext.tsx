@@ -22,7 +22,9 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   const [messageHistory, setMessageHistory] = useState([]);
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(
-    `ws://localhost:8000/api/socket/ws/${userId}/${userEmail}`, 
+    userId && userEmail 
+      ? `ws://localhost:8000/api/socket/ws/${userId}/${userEmail}`
+      : null,
     {
       onOpen: () => console.log('WebSocket conectado'),
       onError: (event) => console.error('Error en WebSocket:', event),
@@ -33,6 +35,7 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
+    console.log(lastMessage)
     if (lastMessage !== null) {
       try {
         const data = JSON.parse(lastMessage.data);
