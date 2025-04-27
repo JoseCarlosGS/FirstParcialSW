@@ -1,37 +1,48 @@
 import React, { useState } from 'react';
-import { login } from '../../services/LoginServices'
+import { register } from '../../services/LoginServices';
 import { useNavigate } from 'react-router-dom';
 
-const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+const Register: React.FC = () => {
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-  // Manejar el envío del formulario
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+    
 
-    try {
-      // Llamar al servicio de autenticación
-      await login(email, password);
-      // Redirigir al usuario o realizar alguna acción adicional
-      console.log('Inicio de sesión exitoso');
-      navigate('/')
-    } catch (err: any) {
-      setError(err.message || 'Error al iniciar sesión');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+        const formData = new FormData(e.currentTarget);
+        const name = formData.get("name");
+        const email = formData.get("email");
+        const password = formData.get("password")
 
-  return (
+        const payload = {
+            name: name as string,
+            email:email as string,
+            password: password as string
+        }
+
+        //console.log(payload)
+    
+        try {
+          // Llamar al servicio de autenticación
+          await register(payload);
+          // Redirigir al usuario o realizar alguna acción adicional
+          //console.log('Registro completo');
+          navigate('/login')
+        } catch (err: any) {
+          setError(err.message || 'Error al registrar');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+return(
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-full max-w-md p-8 space-y-6 bg-gray-600 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center text-white">Iniciar Sesión</h2>
+        <h2 className="text-2xl font-bold text-center text-white">Nueva Cuenta</h2>
 
         {/* Mensaje de error */}
         {error && (
@@ -50,8 +61,21 @@ const Login: React.FC = () => {
             <input
               type="email"
               id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              required
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="usuario@example.com"
+            />
+          </div>
+          {/* Campo de nombre */}
+          <div>
+            <label className="block text-sm font-medium text-gray-200">
+              Nombre
+            </label>
+            <input
+              type="text"
+              id="name"
+              name='name'
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="usuario@example.com"
@@ -66,8 +90,7 @@ const Login: React.FC = () => {
             <input
               type="password"
               id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name='password'
               required
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="Contraseña"
@@ -82,24 +105,20 @@ const Login: React.FC = () => {
               loading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'
             } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
           >
-            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            {loading ? 'Registrando...' : 'Registrarse'}
           </button>
         </form>
 
         {/* Enlace para recuperar contraseña */}
         <div className="text-center">
-          <a href="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-200">
-            ¿Olvidaste tu contraseña?
-          </a>
-        </div>
-        <div className="text-center">
-          <a href="/register" className="text-sm text-indigo-600 hover:text-indigo-200">
-            ¿No tienes una cuenta? Registrate aquí.
+          <a href="/login" className="text-sm text-indigo-600 hover:text-indigo-200">
+            ¿Ya tienes una cuenta? Inicia sesion aquí.
           </a>
         </div>
       </div>
     </div>
-  );
-};
 
-export default Login;
+);
+}
+
+export default Register;

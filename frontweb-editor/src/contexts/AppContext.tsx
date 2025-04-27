@@ -1,15 +1,36 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface EditorInstance {
+interface Page {
+  get: (property: string) => any;
+  getMainComponent: () => any;
+  [key: string]: any;
+}
 
+interface EditorInstance {
   Pages?: {
-    getSelected: () => any;
+    getSelected: () => Page | null;
+    getAll: () => Page[];
+    add: (pageData: any, options?: any) => Page;
+    remove: (page: Page) => void;
+    select: (page: Page) => void;
   };
   Storage?: {
     loadProjectData: (data: any) => Promise<any>;
     getProjectData: () => any;
   };
-  [key: string]: any; 
+  getWrapper: () => any;
+  getComponents: () => any;
+  getHtml: () => string;
+  getCss: () => string;
+  addComponents: (components: any) => any;
+  on: (event: string, callback: Function) => void;
+  off: (event: string, callback: Function) => void;
+  trigger: (event: string, ...args: any[]) => void;
+  Commands: {
+    add: (name: string, command: any) => void;
+    run: (name: string, ...args: any[]) => any;
+  };
+  [key: string]: any;
 }
 
 interface AppContextType {

@@ -4,6 +4,7 @@ import Home from './views/home/Home';
 import NotFound from './views/components/NotFound';
 import Editor from './views/editor/components/Editor';
 import Login from './views/login/Login';
+import Register from './views/login/Register';
 import ProtectedRoute from './ProtectedRoute';
 import GrapesEditor from './views/editor/components/GrapesEditor';
 
@@ -13,6 +14,7 @@ const Router: React.FC = () => {
             <Routes>
                 <Route path="*" element={<NotFound />} />
                 <Route path='/login' element={<Login/>} />
+                <Route path='/register' element={<Register/>} />
                 <Route path= '/grapes' element={<GrapesEditor/>}/>
                 <Route element={<ProtectedRoute />}>
                     <Route path="/" element={<Home />} />

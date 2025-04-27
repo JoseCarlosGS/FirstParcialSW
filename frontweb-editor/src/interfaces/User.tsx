@@ -9,3 +9,9 @@ export interface User {
   is_superuser:boolean;
   online: boolean;
 }
+
+export interface UserRegister {
+  name:string;
+  email:string;
+  password:string;
+}

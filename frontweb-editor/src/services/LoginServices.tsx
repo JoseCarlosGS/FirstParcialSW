@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { UserRegister } from '../interfaces/User';
 
 const API_URL = 'http://localhost:8000/auth'
 
@@ -15,9 +16,9 @@ export const login = async (email: string, password: string) => {
     }
 };
 
-export const register = async (email: string, password: string) => {
+export const register = async (user: UserRegister) => {
     try {
-        const response = await axios.post(`${API_URL}/register`, { email, password });
+        const response = await axios.post(`${API_URL}/register`, user);
         return response.data; // Confirmation or user data
     } catch (error) {
         console.error('Register error:', error);

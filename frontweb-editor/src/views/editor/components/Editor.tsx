@@ -44,28 +44,6 @@ const Editor: React.FC = () => {
         
       })
       customBlocks.forEach(block => e.BlockManager.add(block.id, block));
-      //setEditor(e);
-    
-
-    // // Escuchar cambios locales y enviar al servidor
-    // editor.on('change', () => {
-    //   const projectData: ProjectData = {
-    //     components: editor.getComponents(),
-    //     styles: JSON.stringify(editor.getStyle()),
-    //   };
-    //   socket.current.emit('update', projectData);
-    // });
-
-    // // Escuchar cambios remotos y actualizar el editor
-    // socket.current.on('update', (data: ProjectData) => {
-    //   editor.setComponents(data.components);
-    //   editor.setStyle(data.styles);
-    // });
-
-    // // Limpiar el socket cuando se desmonta el componente
-    // return () => {
-    //   socket.current.disconnect();
-    // };
   }, []);
 
   // Esperar a que editor y projectId estén disponibles

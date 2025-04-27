@@ -9,7 +9,7 @@ import { getCurrentUser } from '../../services/LoginServices';
 
 const Home = () => {
   const projectServices = ProjectServices
-  const [showUserMenu, setShowUserMenu] = useState(false);
+  //const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
   const [proyectos, setProyectos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -161,12 +161,12 @@ const Home = () => {
 
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="font-bold text-lg text-gray-800 mb-2">Completados</h3>
-            <p className="text-3xl font-bold text-green-500">2</p>
+            <p className="text-3xl font-bold text-green-500">0</p>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="font-bold text-lg text-gray-800 mb-2">Pendientes</h3>
-            <p className="text-3xl font-bold text-orange-500">3</p>
+            <p className="text-3xl font-bold text-orange-500">0</p>
           </div>
         </div>
       </div>

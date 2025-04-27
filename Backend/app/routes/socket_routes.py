@@ -21,6 +21,8 @@ def get_connection_manager():
 async def get():
     return HTMLResponse("html")
 
+editor_states = {} 
+
 @router.websocket("/ws/{client_id}/{username}")
 async def websocket_endpoint(
     websocket: WebSocket, 
@@ -31,6 +33,14 @@ async def websocket_endpoint(
     # Usar la misma instancia del ConnectionManager para todos los clientes
     manager = get_connection_manager()
     await manager.connect(websocket, client_id, username, db)
+    
+    if editor_states:
+        # Obtener el estado más reciente (de cualquier cliente)
+        latest_state = next(iter(editor_states.values()))
+        await websocket.send_json({
+            "type": "editor-state",
+            "data": latest_state
+        })
     
     try:
         while True:
@@ -57,16 +67,21 @@ async def websocket_endpoint(
                 }))
             
             elif message_type == "editor-update":
-                # Actualización del editor
                 editor_data = message_data.get("data")
-                print(f"Editor update recibida: {editor_data}")
+                
+                # Si es una sincronización completa, actualizar el estado almacenado
+                if editor_data.get("action") == "full-sync":
+                    editor_states[client_id] = {
+                        "pages": editor_data.get("pages", []),
+                        "activePageIndex": editor_data.get("activePageIndex", 0)
+                    }
                 
                 # Broadcast de la actualización
-                await manager.broadcast(json.dumps({
+                await manager.broadcast_except_sender(json.dumps({
                     "type": "editor-update",
                     "data": editor_data,
                     "userId": client_id
-                }))
+                }), sender_id=client_id)
             
     except WebSocketDisconnect:
         manager.disconnect(client_id)

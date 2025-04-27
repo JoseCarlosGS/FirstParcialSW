@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from ..database import get_session as get_db
 from ..schemas.auth_schemas import LoginRequest, TokenResponse
-from ..schemas.user_schemas import UserResponse
+from ..schemas.user_schemas import UserResponse, UserCreate
 from ..services.auth_services import AuthService
 from ..repositories.user_repository import UserRepository
 
@@ -33,6 +33,17 @@ async def login(credentials: LoginRequest, service: AuthService = Depends(get_au
                              user_email=user.email)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    
+@router.post("/register")
+async def register(
+    user:UserCreate,
+    service: AuthService = Depends(get_auth_service)
+)->UserResponse:
+    try:
+        newUser = service.register(user.model_dump())
+    except Exception as e:
+        raise e
+    return newUser
     
 @router.get("/profile")
 async def get_profile(token: str = Depends(oauth2_scheme), service: AuthService = Depends(get_auth_service))->UserResponse:

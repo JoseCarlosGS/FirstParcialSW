@@ -88,3 +88,9 @@ class ConnectionManager:
                 await self.active_connections[client_id].send_text(message)
             except Exception as e:
                 print(f"Error al enviar historial: {e}")
+                
+    async def broadcast_except_sender(self, message: str, sender_id: str):
+        print(f"Enviando a {len(self.active_connections)} conexiones: {message[:100]}...")
+        for client_id, websocket in self.active_connections.items():
+            if client_id != sender_id:
+                await websocket.send_text(message)
