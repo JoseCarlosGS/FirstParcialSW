@@ -22,7 +22,7 @@ const GrapesEditor = () => {
 
     const handleEditorReady = (editorInstance: any) => {
         console.log("iniciando editor")
-        if (sessionStorage.getItem('currentProject') !== null)
+        //if (sessionStorage.getItem('currentProject') !== null)
             console.log("nuevo proyecto guardado")
             setEditor(editorInstance);
             setTimeout(() => {
@@ -471,16 +471,16 @@ const GrapesEditor = () => {
                         type: 'web',
                         default: {
                             pages: [
-                                // { name: 'Home', component: '<h1>Home page</h1>' },
-                                // { name: 'About', component: '<h1>About page</h1>' },
-                                // { name: 'Contact', component: '<h1>Contact page</h1>' },
+                                { name: 'Home', component: '<h1>Home page</h1>' },
+                                { name: 'About', component: '<h1>About page</h1>' },
+                                { name: 'Contact', component: '<h1>Contact page</h1>' },
                             ]
                         },
                     },
                     onReady: handleEditorReady,
                 }}
             />
-            <button 
+            {/* <button 
                 onClick={sendFullSync}
                 style={{ 
                     position: 'fixed', 
@@ -495,7 +495,7 @@ const GrapesEditor = () => {
                 }}
             >
                 Forzar Sincronización
-            </button>
+            </button> */}
         </>
     );
 };
