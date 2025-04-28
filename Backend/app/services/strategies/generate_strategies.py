@@ -34,6 +34,7 @@ class GenerateByCommand(GenerateProjectStrategy):
     def execute(self, project_name: str, config: ProjectConfig, component_type: str, output_dir: str) -> dict:
         """Ejecuta la generación de un componente en el directorio especificado."""
         project_name = config.project_name.strip()
+        pages = [page.model_dump() for page in config.pages]
         if not project_name:
             raise HTTPException(status_code=400, detail="El nombre del proyecto no puede estar vacío.")
 
@@ -87,7 +88,7 @@ class GenerateByCommand(GenerateProjectStrategy):
             except Exception as e:
                 raise HTTPException(status_code=500, detail=f"Error al leer/modificar app.component.css: {str(e)}")
         
-        generate_components_from_mock(components_mock, project_path=temp_project_path)
+        generate_components_from_mock(pages, project_path=temp_project_path)
 
         # Empaquetar el proyecto en un archivo ZIP
         zip_filename = f"{project_name}.zip"
