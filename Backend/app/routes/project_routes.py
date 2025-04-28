@@ -29,6 +29,21 @@ async def get_project_service(db: Session = Depends(get_db)):
 def borrar_archivo(path: str):
     if os.path.exists(path):
         os.remove(path)
+        
+@router.post("/generate")
+async def generate_angular_project(project: ProjectConfig, background_tasks: BackgroundTasks):
+    """
+    Genera un proyecto Angular basado en el esquema proporcionado.
+    Devuelve un token para descargar el proyecto más tarde.
+    """
+    print("generando")
+    project_id = str(uuid.uuid4())
+    resp = generator.generate_project(project, project_id)
+    zip_path = resp.get("zip_path")
+    zip_filename = resp.get("zip_filename")
+    background_tasks.add_task(borrar_archivo, zip_path)
+    #background_tasks.add_task(generator.generate_project, project)
+    return FileResponse(zip_path, media_type="application/zip", filename=zip_filename)
 
 @router.get("/projects")
 async def get_all(user_id: int,
@@ -84,19 +99,7 @@ async def create_alt(project: ProjectRequest) -> ProjectResponse:
     # son suficientes
     return project
 
-@router.post("/generate")
-async def generate_angular_project(project: ProjectConfig, background_tasks: BackgroundTasks):
-    """
-    Genera un proyecto Angular basado en el esquema proporcionado.
-    Devuelve un token para descargar el proyecto más tarde.
-    """
-    project_id = str(uuid.uuid4())
-    resp = generator.generate_project(project, project_id)
-    zip_path = resp.get("zip_path")
-    zip_filename = resp.get("zip_filename")
-    background_tasks.add_task(borrar_archivo, zip_path)
-    #background_tasks.add_task(generator.generate_project, project)
-    return FileResponse(zip_path, media_type="application/zip", filename=zip_filename)
+
 
 @router.post("/component")
 async def generate_component(prompt: str, background_tasks: BackgroundTasks):
@@ -156,3 +159,4 @@ async def get_by_id(
     service: ProjectService = Depends(get_project_service)
     )->ProjectResponse:
     return service.ger_project_by_id(project_id)
+

@@ -18,3 +18,9 @@ class ProjectResponse(ProjectSchema):
     created_at: str
     updated_at: str
     is_owner: Optional[bool] = None
+    
+class ProjectConfig(BaseModel):
+    project_name:str
+    routing:Optional[bool] = False
+    style:Optional[str] = 'css'
+    standalone:Optional[bool] = True

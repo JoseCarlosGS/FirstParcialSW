@@ -4,7 +4,7 @@ import uuid
 
 from fastapi import HTTPException, Response
 
-from ..schemas.proyect_schemas import ProjectSchema
+from ..schemas.config_schemas import ProjectConfig
 from ..services.template_engine import TemplateEngine
 from .utils.component_generator import ComponentGenerator
 from ..services.strategies.generate_strategies import GenerateProjectStrategy, GenerateByCommand
@@ -27,7 +27,7 @@ class AngularProjectGenerator:
             raise ValueError("Strategy not set")
         return self.strategy.execute(*args, **kwargs)
         
-    def generate_project(self, config: Project, project_schema: ProjectSchema = None, ) -> str:
+    def generate_project(self, config: ProjectConfig, project_schema: ProjectConfig = None, ) -> str:
         """Genera un proyecto Angular completo basado en el esquema y devuelve la ruta al zip"""
         # Crear directorio temporal para el proyecto
         self.set_strategy(GenerateByCommand())
@@ -58,12 +58,12 @@ class AngularProjectGenerator:
         #     shutil.rmtree(project_dir, ignore_errors=True)
         #     raise HTTPException(status_code=500, detail=f"Error generando proyecto: {str(e)}")
     
-    def generate_component(self, prompt:str, project_schema: ProjectSchema = None, component_type: str= None):
+    def generate_component(self, prompt:str, project_schema: ProjectConfig = None, component_type: str= None):
         """Genera un componente Angular basado en el esquema y devuelve la ruta al zip"""
         self.set_strategy(DefaultCodeGenerationStrategy())
         return self.execute_strategy(prompt=prompt)
     
-    def _generate_base_structure(self, project_dir: str, project_schema: ProjectSchema):
+    def _generate_base_structure(self, project_dir: str, project_schema: ProjectConfig):
         """Genera la estructura base de un proyecto Angular"""
         # Generar estructura de directorios
         os.makedirs(os.path.join(project_dir, "src", "app"), exist_ok=True)
@@ -97,7 +97,7 @@ class AngularProjectGenerator:
             {}
         )
     
-    def _generate_components(self, project_dir: str, project_schema: ProjectSchema):
+    def _generate_components(self, project_dir: str, project_schema: ProjectConfig):
         """Genera componentes Angular basados en el esquema"""
         app_dir = os.path.join(project_dir, "src", "app")
         
@@ -154,7 +154,7 @@ class AngularProjectGenerator:
             {}
         )
     
-    def _generate_config_files(self, project_dir: str, project_schema: ProjectSchema):
+    def _generate_config_files(self, project_dir: str, project_schema: ProjectConfig):
         """Genera archivos de configuración adicionales"""
         # Generar archivos de entorno
         env_dir = os.path.join(project_dir, "src", "environments")

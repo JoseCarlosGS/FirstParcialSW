@@ -1,10 +1,24 @@
-from fastapi import HTTPException
-from abc import ABC, abstractmethod
-from ...models.project import Project
 import subprocess
 import zipfile
 import os
 import shutil
+from fastapi import HTTPException
+from abc import ABC, abstractmethod
+
+from ...models.project import Project
+from ...schemas.config_schemas import ProjectConfig
+from ...utils.constants.modules_template import NO_STAND_ALONE_DEFAULT
+from ...utils.constants.mock_data import MOCK_DATA
+from .utils.file_processor import replace_entire_file
+from .utils.code_processor import generate_components_from_mock
+
+app_module_ts = NO_STAND_ALONE_DEFAULT.get('app_module_ts')
+app_component_html = NO_STAND_ALONE_DEFAULT.get('app_componet_html')
+app_component_css = MOCK_DATA[0].get('css')
+
+components_mock = MOCK_DATA
+
+
 
 class GenerateProjectStrategy(ABC):
     @abstractmethod
@@ -17,7 +31,7 @@ class GenerateByCommand(GenerateProjectStrategy):
         self.temp_dir = os.path.join(os.getcwd(), "temp-projects")
         os.makedirs(self.temp_dir, exist_ok=True)  # Crear el directorio si no existe
 
-    def execute(self, project_name: str, config: Project, component_type: str, output_dir: str) -> dict:
+    def execute(self, project_name: str, config: ProjectConfig, component_type: str, output_dir: str) -> dict:
         """Ejecuta la generación de un componente en el directorio especificado."""
         project_name = config.project_name.strip()
         if not project_name:
@@ -28,7 +42,8 @@ class GenerateByCommand(GenerateProjectStrategy):
             "--routing" if config.routing else "",
             f"--style={config.style}",
             "--skip-install",
-            "--skip-git" if config.skip_git else ""
+            "--skip-git" if config.skip_git else "",
+            "--standalone=false",
         ]
         options = [opt for opt in options if opt]
 
@@ -50,23 +65,29 @@ class GenerateByCommand(GenerateProjectStrategy):
             raise HTTPException(status_code=500, detail=f"Error al generar el proyecto: {e.stderr.decode()}")
 
         # Modificar el archivo angular.json antes de empaquetar
-        angular_json_path = os.path.join(temp_project_path, "angular.json")
-        if os.path.exists(angular_json_path):
+        # angular_json_path = os.path.join(temp_project_path, "app.module.ts")
+        app_module_ts_path = os.path.join(f"{temp_project_path}/src/app", "app.module.ts")
+        if os.path.exists(app_module_ts_path):
             try:
-                with open(angular_json_path, "r", encoding="utf-8") as file:
-                    angular_json_content = file.read()
-                    print("Contenido de angular.json:")
-                    print(angular_json_content)
-
-                # Aquí puedes realizar modificaciones en el archivo si es necesario
-                # Por ejemplo, agregar o cambiar alguna configuración
-                # angular_json_content = angular_json_content.replace("old_value", "new_value")
-
-                # Guardar los cambios (si los hiciste)
-                # with open(angular_json_path, "w", encoding="utf-8") as file:
-                #     file.write(angular_json_content)
+                replace_entire_file(app_module_ts_path, app_module_ts)
             except Exception as e:
-                raise HTTPException(status_code=500, detail=f"Error al leer/modificar angular.json: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Error al leer/modificar app.module.ts: {str(e)}")
+            
+        app_component_html_path = os.path.join(f"{temp_project_path}/src/app", "app.component.html")
+        if os.path.exists(app_component_html_path):
+            try:
+                replace_entire_file(app_component_html_path, app_component_html)
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Error al leer/modificar app.component.html: {str(e)}")
+            
+        app_component_css_path = os.path.join(f"{temp_project_path}/src/app", "app.component.css")
+        if os.path.exists(app_component_css_path):
+            try:
+                replace_entire_file(app_component_css_path, app_component_css)
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Error al leer/modificar app.component.css: {str(e)}")
+        
+        generate_components_from_mock(components_mock, project_path=temp_project_path)
 
         # Empaquetar el proyecto en un archivo ZIP
         zip_filename = f"{project_name}.zip"
@@ -89,3 +110,15 @@ class GenerateByCommand(GenerateProjectStrategy):
             print(f"Advertencia: No se pudo eliminar la carpeta del proyecto: {str(e)}")
 
         return {"zip_path": zip_path, "filename": zip_filename}
+    
+    
+    def process_file(self, file_path, new_content):
+        try:
+            replace_entire_file(file_path, new_content)
+            print(f"Contenido de {os.path.basename(file_path)}:")
+            print(new_content)
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error al procesar {os.path.basename(file_path)}: {str(e)}"
+            )

@@ -1,0 +1,239 @@
+{
+  "assets": [],
+  "styles": [
+    {
+      "selectors": [
+        "gjs-grid-column"
+      ],
+      "style": {
+        "flex": "1 1 0%",
+        "padding": "5px 0"
+      },
+      "group": "cmp:gridColumn"
+    },
+    {
+      "selectors": [
+        "gjs-grid-row"
+      ],
+      "style": {
+        "display": "flex",
+        "justify-content": "flex-start",
+        "align-items": "stretch",
+        "flex-direction": "row",
+        "min-height": "auto",
+        "padding": "10px 0"
+      },
+      "group": "cmp:gridRow"
+    },
+    {
+      "selectors": [
+        "gjs-grid-row"
+      ],
+      "style": {
+        "flex-direction": "column"
+      },
+      "mediaText": "(max-width: 992px)",
+      "atRuleType": "media",
+      "group": "cmp:gridRow"
+    },
+    {
+      "selectors": [
+        "#izqa"
+      ],
+      "style": {
+        "padding-top": "0px",
+        "padding-right": "0px",
+        "padding-bottom": "0px",
+        "padding-left": "0px"
+      },
+      "wrapper": 1
+    }
+  ],
+  "pages": [
+    {
+      "name": "Home",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "attributes": {
+              "id": "izqa"
+            },
+            "components": [
+              {
+                "type": "heading",
+                "attributes": {
+                  "id": "i8si"
+                },
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "Home page"
+                  }
+                ]
+              },
+              {
+                "type": "gridRow",
+                "classes": [
+                  "gjs-grid-row"
+                ],
+                "attributes": {
+                  "id": "i21vz"
+                },
+                "components": [
+                  {
+                    "type": "gridColumn",
+                    "classes": [
+                      "gjs-grid-column"
+                    ],
+                    "attributes": {
+                      "id": "iqe03"
+                    },
+                    "components": [
+                      {
+                        "type": "input",
+                        "void": true,
+                        "attributes": {
+                          "type": "text",
+                          "id": "iapdz"
+                        }
+                      },
+                      {
+                        "type": "button",
+                        "attributes": {
+                          "type": "button",
+                          "id": "ii4xi"
+                        },
+                        "components": [
+                          {
+                            "type": "contentEditable",
+                            "components": [
+                              {
+                                "type": "textnode",
+                                "content": "Button"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "center-content": ""
+                  },
+                  {
+                    "type": "gridColumn",
+                    "classes": [
+                      "gjs-grid-column"
+                    ],
+                    "attributes": {
+                      "id": "ikh8h"
+                    },
+                    "components": [
+                      {
+                        "type": "input",
+                        "void": true,
+                        "attributes": {
+                          "type": "text",
+                          "id": "ie4ew"
+                        }
+                      },
+                      {
+                        "type": "button",
+                        "attributes": {
+                          "type": "button"
+                        },
+                        "components": [
+                          {
+                            "type": "contentEditable",
+                            "components": [
+                              {
+                                "type": "textnode",
+                                "content": "Button"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "center-content": ""
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "DkKK6Ji0IDKGQN0R"
+        }
+      ],
+      "id": "Iq2lRr3RCieOjfUn"
+    },
+    {
+      "name": "About",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "components": [
+              {
+                "type": "heading",
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "About page"
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "mbX7fwsDbwND5Dh1"
+        }
+      ],
+      "id": "vjWtXsUnJl3C4VUL"
+    },
+    {
+      "name": "Contact",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "components": [
+              {
+                "type": "heading",
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "Contact page"
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "RwRtol9cFCyejRIM"
+        }
+      ],
+      "id": "Ae2yIFokEZNxYbek"
+    }
+  ],
+  "symbols": [],
+  "dataSources": [],
+  "custom": {
+    "projectType": "web",
+    "id": ""
+  }
+}

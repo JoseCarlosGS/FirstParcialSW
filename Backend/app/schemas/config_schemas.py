@@ -5,3 +5,4 @@ class ProjectConfig(BaseModel):
     routing: bool = False
     style: str = "css"
     skip_git: bool = True
+    standalone: bool = True
