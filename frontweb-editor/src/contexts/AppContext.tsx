@@ -31,6 +31,10 @@ interface EditorInstance {
     run: (name: string, ...args: any[]) => any;
   };
   [key: string]: any;
+  CssComposer?: {
+    getAll: () => any[];
+    toCSS: (options?: { avoidProtected?: boolean; keepUnusedStyles?: boolean ; rules?: any[]}) => string;
+  };
 }
 
 interface AppContextType {

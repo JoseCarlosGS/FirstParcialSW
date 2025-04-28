@@ -9,6 +9,7 @@ import { ProjectServices } from '../../services/ProjectServices';
 import { ProjectRequest } from '../../interfaces/Project';
 import { Project } from '../../interfaces/Project';
 import ConfirmationModal from '../components/ConfirmationModal';
+import ConfigModal, { ConfigData }  from './ConfigModal';
 
 
 const Navbar: React.FC = () => {
@@ -22,6 +23,7 @@ const Navbar: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [showAlert, setShowAlert] = useState(false);
+  const [showConfig, setShowConfig] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -102,6 +104,42 @@ const Navbar: React.FC = () => {
     setShowmodalForm(true)
   }
 
+  const handleGenerateProject = async (config: ConfigData): Promise<void> => {
+
+    const projectPages: { name: string; html: string; css: string; typescript: string }[] = [];
+
+    const pages = editor?.Pages?.getAll();
+    const globalCss = editor!.getCss(); 
+    if (pages) {
+      pages.forEach((page) => {
+        const pageData = {
+          name: page.getName(),
+          html: page.getMainComponent().toHTML(),
+          css: globalCss,
+          typescript: "", // De momento vacío
+        };
+        projectPages.push(pageData);
+      });
+    }
+    const configDict = { ...config, pages : projectPages };
+    const response = await ProjectServices.generateAngularProject(configDict);
+
+    if (response && response instanceof Blob) {
+      const url = URL.createObjectURL(response);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${config.project_name}.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+      console.log('Archivo .zip descargado con éxito');
+    } else {
+      console.error('La respuesta no es un Blob válido');
+    }
+
+
+    console.log(configDict);
+  }
+
   const handleImportClick = () => {
     console.log('Clic en Importar');
     fileInputRef.current?.click();
@@ -159,7 +197,7 @@ const Navbar: React.FC = () => {
     console.log('respuesta al crear:',response)
     if (response)
         sessionStorage.setItem('currentProject', response.data.id_project)
-    setShowmodalForm(false); // Cierra el modal si querés
+    setShowmodalForm(false); 
   };
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -264,6 +302,15 @@ const Navbar: React.FC = () => {
                 className="px-3 py-1 hover:bg-gray-700 cursor-pointer"
               >
                 Guardar
+              </div>
+              <div
+                onClick={() => {
+                  setShowConfig(true);
+                  closeMenu();
+                }}
+                className="px-3 py-1 hover:bg-gray-700 cursor-pointer"
+              >
+                Generar proyecto
               </div>
             </div>
           )}
@@ -381,6 +428,11 @@ const Navbar: React.FC = () => {
           onCancel={() => setShowAlert(false)}
           message="¿Estás seguro que deseas vovler al inicio? Podria perder los cambios que no han sido guardados."
         />
+      <ConfigModal 
+        isOpen={showConfig} 
+        onCancel={() => setShowConfig(false)} 
+        onSubmit={handleGenerateProject}
+      />
   </nav>
 
   );

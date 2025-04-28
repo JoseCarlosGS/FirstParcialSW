@@ -456,7 +456,7 @@ const GrapesEditor = () => {
             if (!initialSyncDone.current) {
                 initialSyncRequest();
             }
-        }, 5000);
+        }, 10000);
         
         return () => clearInterval(syncCheckInterval);
     }, [editor, socket]);

@@ -63,7 +63,19 @@ export class ProjectServices {
         console.error('Error removing to user:', error);
         throw error;
       }
-    } 
+    }
+
+    static async generateAngularProject(projectConfig: any): Promise<Blob> {
+      try {
+      const response = await axios.post(`${BASE_URL}/generate`, projectConfig, {
+        responseType: 'blob', // To handle the zip file response
+      });
+      return response.data;
+      } catch (error) {
+      console.error('Error generating Angular project:', error);
+      throw error;
+      }
+    }
 
     static async createProject(
       userId: number,
