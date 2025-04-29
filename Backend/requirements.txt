@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 pydantic[email]
-psycopg2
+psycopg2-binary
 sqlalchemy
 jinja2
 python-multipart
@@ -9,3 +9,4 @@ aiofiles
 websockets
 bcrypt
 python-jose
+sqlmodel

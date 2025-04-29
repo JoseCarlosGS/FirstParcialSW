@@ -1,0 +1,66 @@
+# Entornos virtuales
+venv/
+env/
+.env/
+.venv/
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Archivos de caché y directorios de Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Archivos de caché de Angular
+.angular/
+
+# Directorios de desarrollo y IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Archivos de base de datos locales
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Archivos temporales
+tmp/
+temp/
+
+# No ignorar saved_projects, es parte de la app
+# !saved_projects/
+
+# Archivos de Docker (si hay otros)
+docker-compose*.yml
+
+# Archivos de documentación
+docs/
+README.md
+CHANGELOG.md
+
+# Tests
+tests/
+test/
+
+# Archivos de configuración de entorno local
+.env
+.env.*
+!.env.example
+
+# Archivos de construcción
+dist/
+build/

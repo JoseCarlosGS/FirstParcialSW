@@ -3,7 +3,9 @@ from typing import Annotated
 from fastapi import Depends
 
 # Configuración de la conexión a la base de datos PostgreSQL
-DATABASE_URL = "postgresql://postgres:71194970@localhost:5432/1erparcialSW1"
+#DATABASE_URL = "postgresql://postgres:postgres@db:5432/wsio"
+DATABASE_URL = "postgresql://wsio_owner:npg_MOWmTiLU8Np4@ep-autumn-dream-a40h1j7p-pooler.us-east-1.aws.neon.tech/wsio?sslmode=require"
+
 
 # Crear el engine de SQLModel
 engine = create_engine(DATABASE_URL)

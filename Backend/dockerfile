@@ -1,0 +1,53 @@
+# Imagen base con Python
+FROM python:3.13-slim
+
+# Actualizar sistemas y añadir dependencias necesarias
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
+    git \
+    postgresql-client \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instalar Node.js y npm
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Verificar instalación de Node.js y npm
+RUN node --version && npm --version
+
+# Instalar Angular CLI globalmente
+RUN npm install -g @angular/cli
+
+# Verificar la instalación de Angular CLI
+RUN ng version
+
+# Definir directorio de trabajo
+WORKDIR /app
+
+# Copiar los archivos de requisitos de Python primero
+COPY requirements.txt .
+
+# Instalar dependencias de Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Asegurarse de tener SQLAlchemy y psycopg2 para PostgreSQL
+RUN pip install --no-cache-dir sqlalchemy psycopg2-binary
+
+# Crear la carpeta para almacenar proyectos
+RUN mkdir -p /app/saved_projects
+
+# Copiar el resto del código de la aplicación
+COPY . .
+
+# Exponer el puerto para FastAPI
+EXPOSE 8000
+
+# Configurar las variables de entorno para la conexión a PostgreSQL
+ENV DATABASE_URL=postgresql://postgres:postgres@db:5432/wsio
+ENV PYTHONPATH=/app
+
+# Comando para ejecutar la aplicación FastAPI usando uvicorn
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
