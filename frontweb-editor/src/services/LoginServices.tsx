@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { UserRegister } from '../interfaces/User';
 
-const API_URL = 'http://localhost:8000/auth'
+const API_URL = 'https://back-deployp1.onrender.com/auth'
 
 export const login = async (email: string, password: string) => {
     try {
@@ -44,20 +44,20 @@ export const getCurrentUser = () => {
 
 export const getHeaders = () => {
     const token = localStorage.getItem('token'); // Obtiene el token del almacenamiento local
-  
+
     // Define los encabezados base
     const headers = {
-      'Content-Type': 'application/json', // Indica que se envía/recibe JSON
+        'Content-Type': 'application/json', // Indica que se envía/recibe JSON
     };
-  
+
     // Si hay un token, añádelo al encabezado "Authorization"
     if (token) {
-      return {
-        ...headers,
-        Authorization: `Bearer ${token}`, // Añade el token en el formato Bearer
-      };
+        return {
+            ...headers,
+            Authorization: `Bearer ${token}`, // Añade el token en el formato Bearer
+        };
     }
-  
+
     // Si no hay token, devuelve solo los encabezados base
     return headers;
-  };
+};
