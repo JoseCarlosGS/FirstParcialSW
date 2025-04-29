@@ -28,7 +28,7 @@ export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(
     userId && userEmail
-      ? `ws://back-deployp1.onrender.com/api/socket/ws/${userId}/${userEmail}`
+      ? `wss://back-deployp1.onrender.com/api/socket/ws/${userId}/${userEmail}`
       : null,
     {
       onOpen: () => console.log('WebSocket conectado'),

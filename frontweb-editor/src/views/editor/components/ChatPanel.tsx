@@ -182,7 +182,7 @@ const ChatPanel: React.FC<any> = () => {
           } ${!isOpen ? "overflow-hidden" : ""}`}
         style={{ minWidth: 0 }}
       >
-        <div className="flex items-center justify-between border-b border-gray-800">
+        <div className="flex items-center justify-between border-b border-gray-800 max-h-10">
           <h2 className="font-bold text-white flex items-center m-4">
             Proyecto
           </h2>
@@ -196,9 +196,9 @@ const ChatPanel: React.FC<any> = () => {
 
         {/* Sección de usuarios */}
         <div className="flex-1 p-3 border-b border-gray-200 min-h-60 max-h-60 flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4 max-h-6">
             {/* Título con ícono */}
-            <h2 className="font-semibold text-white flex items-center">
+            <h2 className="text-sm font-semibold text-white flex items-center">
               <UserCircle className="mr-2" size={18} />
               Miembros ({users?.filter((u) => u.online).length}/{users?.length})
             </h2>
@@ -267,9 +267,9 @@ const ChatPanel: React.FC<any> = () => {
         </div>
 
         {/* Sección de chat */}
-        <div className="flex-1 flex flex-col overflow-hidden p-3 bg-gray-900 min-h-90 max-h-90">
+        <div className="flex-1 flex flex-col overflow-hidden p-3 bg-gray-900 min-h-80 max-h-80">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-white flex items-center">
+            <h2 className="font-semibold text-white flex items-center text-sm">
               <MessageSquare className="mr-2" size={18} />
               Chat {readyState === 1 ? '(Conectado)' : '(Conectando...)'}
             </h2>
