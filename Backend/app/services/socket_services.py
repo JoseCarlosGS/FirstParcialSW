@@ -58,6 +58,14 @@ class ConnectionManager:
             del self.users[client_id]
         print(f"Usuario desconectado (ID: {client_id})")
         print(f"Usuarios activos: {len(self.active_connections)}")
+        
+        if len(self.active_connections) == 0:
+            self.clear_message_history()
+        
+    def clear_message_history(self):
+        global message_history
+        message_history = []
+        print("Historial de mensajes eliminado porque no quedan usuarios conectados")
     
     async def broadcast(self, message: str):
         print(f"Enviando a {len(self.active_connections)} conexiones: {message[:100]}...")

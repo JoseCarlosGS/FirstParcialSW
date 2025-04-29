@@ -1,0 +1,99 @@
+{
+  "assets": [],
+  "styles": [],
+  "pages": [
+    {
+      "name": "Home",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "components": [
+              {
+                "type": "heading",
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "Home page"
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "4AV6o5SlxjUvUcbP"
+        }
+      ],
+      "id": "YD3hwQUaPJtghmpY"
+    },
+    {
+      "name": "About",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "components": [
+              {
+                "type": "heading",
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "About page"
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "t4OZe1I1JizjILn7"
+        }
+      ],
+      "id": "llgOzvuoRHV4SD0x"
+    },
+    {
+      "name": "Contact",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "components": [
+              {
+                "type": "heading",
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "Contact page"
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "cUwJ76wJD2kdPYO8"
+        }
+      ],
+      "id": "oDzJHFuHQrYUaJNe"
+    }
+  ],
+  "symbols": [],
+  "dataSources": [],
+  "custom": {
+    "projectType": "web",
+    "id": ""
+  }
+}

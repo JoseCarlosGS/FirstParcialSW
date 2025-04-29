@@ -1,0 +1,99 @@
+{
+  "assets": [],
+  "styles": [],
+  "pages": [
+    {
+      "name": "Home",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "components": [
+              {
+                "type": "heading",
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "Home page"
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "u3yl4EGeb7shAIqu"
+        }
+      ],
+      "id": "w7QYMcXV2Awn24lG"
+    },
+    {
+      "name": "About",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "components": [
+              {
+                "type": "heading",
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "About page"
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "oOMEwJHI016GCOm8"
+        }
+      ],
+      "id": "k5aQHMNbG3d3iIvv"
+    },
+    {
+      "name": "Contact",
+      "frames": [
+        {
+          "component": {
+            "type": "wrapper",
+            "components": [
+              {
+                "type": "heading",
+                "components": [
+                  {
+                    "type": "textnode",
+                    "content": "Contact page"
+                  }
+                ]
+              }
+            ],
+            "head": {
+              "type": "head"
+            },
+            "docEl": {
+              "tagName": "html"
+            }
+          },
+          "id": "hsmYOnCYcQD8cZIG"
+        }
+      ],
+      "id": "5RSxFpHp02LEVu02"
+    }
+  ],
+  "symbols": [],
+  "dataSources": [],
+  "custom": {
+    "projectType": "web",
+    "id": ""
+  }
+}

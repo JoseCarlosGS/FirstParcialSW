@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { register } from '../../services/LoginServices';
 import { useNavigate } from 'react-router-dom';
+import AlertModal from '../components/AlertModal';
+import { CheckCircleIcon } from 'lucide-react';
 
 const Register: React.FC = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
+    const [showConfirmation, setShowConfirmation] = useState(false)
     
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,7 +33,10 @@ const Register: React.FC = () => {
           await register(payload);
           // Redirigir al usuario o realizar alguna acción adicional
           //console.log('Registro completo');
-          navigate('/login')
+          setShowConfirmation(true);
+          setTimeout(() => {
+            navigate('/login');
+          }, 3000); // Delay redirection by 3 seconds
         } catch (err: any) {
           setError(err.message || 'Error al registrar');
         } finally {
@@ -116,6 +121,13 @@ return(
           </a>
         </div>
       </div>
+      <AlertModal 
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        icon={<CheckCircleIcon size={48} />}
+        message="Registro exitoso, seras redirigido a la pagina de inicio de session"
+        confirmText="Entendido"
+      />
     </div>
 
 );

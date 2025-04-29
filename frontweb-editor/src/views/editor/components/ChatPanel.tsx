@@ -6,6 +6,7 @@ import { UserServices } from '../../../services/UserServices';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { getCurrentUser } from '../../../services/LoginServices';
 import { useWebSocketContext } from '../../../contexts/WebSocketContext';
+import { useAppContext } from '../../../contexts/AppContext';
 
 // Definición de tipos
 
@@ -16,8 +17,9 @@ interface Message {
   timestamp: Date;
 }
 
-const ChatPanel: React.FC<any> = (projectId) => {
+const ChatPanel: React.FC<any> = () => {
   // Estados
+  const {currentProject} = useAppContext()
   const [isOpen, setIsOpen] = useState(true);
   const [users, setUsers] = useState<User[] | undefined>(undefined);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -28,7 +30,6 @@ const ChatPanel: React.FC<any> = (projectId) => {
   const [foundUser, setFoundUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  const [currentProjectId, setCurrentProjectId] = useState(Number)
   const [showAlert, setShowAlert] = useState(false);
   const [deleteUser, setDeteleUser] = useState<User | null>(null);
   const [isSaved, setIsSaved] = useState(false)
@@ -48,48 +49,6 @@ const ChatPanel: React.FC<any> = (projectId) => {
     if (storedId) return storedId;
   });
 
-  // const [userEmail] = useState(() => {
-  //   const storedName = sessionStorage.getItem('user_email');
-  //   if (storedName) return storedName;
-  // });
-
-  // const { sendMessage, lastMessage, readyState } = useWebSocket(
-  //   `ws://localhost:8000/api/socket/ws/${userId}/${userEmail}`,
-  //   {
-  //     onOpen: () => {
-  //       console.log('WebSocket conectado');
-  //     },
-  //     onError: (event) => {
-  //       console.error('Error de WebSocket:', event);
-  //     },
-  //     shouldReconnect: () => true,
-  //     reconnectAttempts: 10,
-  //     reconnectInterval: 3000,
-  //   }
-  // );
-
-  // useEffect(() => {
-  //   if (lastMessage !== null) {
-  //     try {
-  //       const data = JSON.parse(lastMessage.data);
-  //       console.log("Mensaje recibido:", lastMessage.data);
-  //       if (data.type === 'users') {
-  //         //setUsers(data.data);
-  //         setOnlineUsers(data.data);
-  //       }
-  //       // Esperar a procesar mensajes solo cuando tengamos la lista de usuarios
-  //       else if (data.type === 'message') {
-  //         setMessages(prevMessages => [...prevMessages, data.data]);
-  //       }
-  //       else if (data.type === 'history') {
-  //         setMessages(data.data);
-  //       }
-  //     } catch (error) {
-  //       console.error('Error al parsear el mensaje:', error);
-  //     }
-  //   }
-  // }, [lastMessage, users]);
-  // Cada vez que llega un nuevo mensaje, actualizar mensajes
   useEffect(() => {
     //console.log(lastChatMessage)
     setMessages(prev => [...prev, lastChatMessage]);
@@ -101,22 +60,15 @@ const ChatPanel: React.FC<any> = (projectId) => {
   }, [messageHistory]);
 
   useEffect(() => {
-    const current = sessionStorage.getItem('currentProject')
-    if (current !== null) {
-      setCurrentProjectId(parseInt(current))
+    if (currentProject !== null) {
+      fetchUsers();
       setIsSaved(true)
     }
-  }, []);
-
-  useEffect(() => {
-    if (currentProjectId !== null && currentProjectId !== 0) {
-      fetchUsers();
-    }
-  }, [currentProjectId]);
+  }, [currentProject]);
 
   const fetchUsers = async () => {
     try {
-        const data = await ProjectServices.getAllUsersByProjectId(currentProjectId);
+        const data = await ProjectServices.getAllUsersByProjectId(parseInt(currentProject!.id));
         setUsers(data);
     } catch (error) {
       console.error('Error al obtener usuarios:', error);
@@ -175,7 +127,7 @@ const ChatPanel: React.FC<any> = (projectId) => {
   const handleConfirm = async () => {
     console.log("Usuario confirmó la acción");
     try{
-      await ProjectServices.removeUserToProject(projectId.project, deleteUser?.id! )
+      await ProjectServices.removeUserToProject(parseInt(currentProject!.id), deleteUser?.id! )
     }catch (error){
       console.error('Error al eliminar al usuario', error)
     }finally{
@@ -189,7 +141,7 @@ const ChatPanel: React.FC<any> = (projectId) => {
     if (foundUser) {
       setIsLoading(true)
       try{
-        await ProjectServices.addUserToProject(projectId.project, foundUser.id);
+        await ProjectServices.addUserToProject(parseInt(currentProject!.id), foundUser.id);
       }
       catch (error){
         setError(error as string)
@@ -242,7 +194,7 @@ const ChatPanel: React.FC<any> = (projectId) => {
           </div>
 
           {/* Sección de usuarios */}
-          <div className="flex-1 p-3 border-b border-gray-200 min-h-60 max-h-60">
+          <div className="flex-1 p-3 border-b border-gray-200 min-h-60 max-h-60 flex flex-col overflow-hidden">
             <div className="flex items-center justify-between mb-4">
               {/* Título con ícono */}
               <h2 className="font-semibold text-white flex items-center">
@@ -370,20 +322,20 @@ const ChatPanel: React.FC<any> = (projectId) => {
             </div>
 
             {/* Input de mensaje */}
-            <div className="flex items-center bg-white rounded-lg border border-gray-300 overflow-hidden">
+            <div className="flex items-center bg-white rounded-lg border border-gray-300 overflow-hidden min-h-10 max-h-10">
               <input
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                onKeyDown={(e) => e.key === "Enter" && handleSendMessage()} // mejor usar onKeyDown, no onKeyPress (ya está deprecado)
                 placeholder="Escribe un mensaje..."
                 className="flex-1 py-2 px-3 focus:outline-none text-sm text-gray-900"
               />
               <button
                 onClick={handleSendMessage}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-r-lg"
+                className="bg-blue-500 hover:bg-blue-600 text-white h-full aspect-square flex items-center justify-center"
               >
-                <Send size={18} className="mx-auto" />
+                <Send size={20}/>
               </button>
             </div>
           </div>

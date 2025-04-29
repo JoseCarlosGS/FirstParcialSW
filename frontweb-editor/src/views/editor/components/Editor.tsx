@@ -101,7 +101,7 @@ const Editor: React.FC = () => {
       <div className="flex flex-row flex-grow overflow-hidden h-full">
         {/* ChatPanel se encarga de su ancho internamente */}
         <div className="h-full overflow-hidden">
-          <ChatPanel project={projectId} />
+          <ChatPanel />
         </div>
   
         {/* GrapesEditor ocupa el resto */}

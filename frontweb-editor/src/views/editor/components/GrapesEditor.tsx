@@ -1,12 +1,12 @@
 import StudioEditor from '@grapesjs/studio-sdk/react';
 import '@grapesjs/studio-sdk/style';
 import { useAppContext } from '../../../contexts/AppContext';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useWebSocketContext } from '../../../contexts/WebSocketContext';
 
 // ...
 const GrapesEditor = () => {
-    const { setEditor } = useAppContext();
+    const { setEditor, currentProject } = useAppContext();
     const socket = useWebSocketContext();
     const isApplyingRemoteUpdate = useRef(false);
     const { editor } = useAppContext();
@@ -14,6 +14,14 @@ const GrapesEditor = () => {
     const lastOperationId = useRef<string | null>(null);
     const currentPageIndex = useRef<number>(0);
     const initialSyncDone = useRef<boolean>(false);
+    const [isUpdating, setIsUpdating] = useState(false)
+
+    useEffect(() => {
+        console.log('init', currentProject, setIsUpdating)
+        if (currentProject){
+            setIsUpdating(true)
+        }
+    },[])
     
     // Generar un ID único para cada operación
     const generateOperationId = () => {
@@ -288,6 +296,7 @@ const GrapesEditor = () => {
     // Procesar actualizaciones recibidas
     useEffect(() => {
         if (!socket?.onEditorUpdate) return;
+        if (!editor) return;
         
         const processedOperations = new Set<string>();
         
@@ -470,11 +479,11 @@ const GrapesEditor = () => {
                     project: {
                         type: 'web',
                         default: {
-                            pages: [
+                            pages: isUpdating ? [] : [ 
                                 { name: 'Home', component: '<h1>Home page</h1>' },
                                 { name: 'About', component: '<h1>About page</h1>' },
                                 { name: 'Contact', component: '<h1>Contact page</h1>' },
-                            ]
+                            ] 
                         },
                     },
                     onReady: handleEditorReady,

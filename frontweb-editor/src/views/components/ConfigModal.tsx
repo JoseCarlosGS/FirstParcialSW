@@ -24,8 +24,14 @@ const ConfigModal: React.FC<ConfigModalProps> = ({
   const [installDependencies, setInstallDependencies] = useState(true);
   const [routing, setRouting] = useState(false);
   const [style, setStyle] = useState("css");
+  const [touched, setTouched] = useState(false);
+
+  const isInvalid = touched && project_name.trim() === "";
 
   const handleSubmit = () => {
+    setTouched(true);
+    if (project_name.trim() === "") return;
+
     const config: ConfigData = {
       project_name,
       standalone,
@@ -45,16 +51,22 @@ const ConfigModal: React.FC<ConfigModalProps> = ({
           <h3 className="text-xl font-medium text-gray-100">Configuración del Proyecto</h3>
 
           <div className="mt-4 space-y-4">
-            {/* Input nombre */}
+            {/* Input nombre con validación */}
             <div>
               <label className="block text-gray-300 mb-1">Nombre del Proyecto</label>
               <input
                 type="text"
                 value={project_name}
                 onChange={(e) => setProjectName(e.target.value)}
-                className="w-full px-3 py-2 rounded-md bg-gray-700 text-gray-100 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onBlur={() => setTouched(true)}
+                className={`w-full px-3 py-2 rounded-md bg-gray-700 text-gray-100 border ${
+                  isInvalid ? "border-red-500 focus:ring-red-500" : "border-gray-600 focus:ring-blue-500"
+                } focus:outline-none focus:ring-2`}
                 placeholder="mi-aplicacion"
               />
+              {isInvalid && (
+                <p className="text-red-400 text-sm mt-1">Este campo es requerido</p>
+              )}
             </div>
 
             {/* Checkboxes */}
@@ -127,5 +139,6 @@ const ConfigModal: React.FC<ConfigModalProps> = ({
 };
 
 export default ConfigModal;
+
 
 

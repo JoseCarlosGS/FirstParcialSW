@@ -69,7 +69,7 @@ const Home = () => {
     console.log('cargando el proyecto: ', project.id)
     sessionStorage.setItem('currentProject', project.id.toString())
     setCurrentProject(project)
-    navigate(`/editor?id=${project.id}`);
+    navigate(`/editor`);
   };
   
   return (

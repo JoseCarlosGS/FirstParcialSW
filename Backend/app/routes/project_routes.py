@@ -63,7 +63,8 @@ async def create_project(
 ):
     try:
         new_project = service.create_project(project.model_dump(), user_id, file)
-        return new_project
+        resp = service.ger_project_by_id(new_project.id_project)
+        return resp
     except Exception as e:
         raise HTTPException(status_code=400, detail={"detail": str(e)})
 

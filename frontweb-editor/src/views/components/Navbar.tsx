@@ -10,6 +10,7 @@ import { ProjectRequest } from '../../interfaces/Project';
 import ConfirmationModal from '../components/ConfirmationModal';
 import ConfigModal, { ConfigData }  from './ConfigModal';
 import AlertModal from './AlertModal';
+import toast from 'react-hot-toast';
 
 
 const Navbar: React.FC = () => {
@@ -104,6 +105,7 @@ const Navbar: React.FC = () => {
 
     const pages = editor?.Pages?.getAll();
     const globalCss = editor!.getCss(); 
+    console.log(globalCss)
     if (pages) {
       pages.forEach((page) => {
         const pageData = {
@@ -116,22 +118,27 @@ const Navbar: React.FC = () => {
       });
     }
     const configDict = { ...config, pages : projectPages };
-    const response = await ProjectServices.generateAngularProject(configDict);
-
-    if (response && response instanceof Blob) {
-      const url = URL.createObjectURL(response);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${config.project_name}.zip`;
-      a.click();
-      URL.revokeObjectURL(url);
-      console.log('Archivo .zip descargado con éxito');
-    } else {
-      console.error('La respuesta no es un Blob válido');
-    }
-
-
-    console.log(configDict);
+    setShowConfig(false)
+    await toast.promise(
+      ProjectServices.generateAngularProject(configDict),
+      {
+        loading: 'Generando proyecto...',
+        success: (response) => {
+          if (response instanceof Blob) {
+            const url = URL.createObjectURL(response);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${config.project_name}.zip`;
+            a.click();
+            URL.revokeObjectURL(url);
+            return 'Proyecto descargado con éxito 🎉';
+          } else {
+            throw new Error('La respuesta no es un archivo válido');
+          }
+        },
+        error: (err) => `Error al generar: ${err.message || 'Desconocido'}`,
+      }
+    );
   }
 
   const handleImportClick = () => {
@@ -141,7 +148,7 @@ const Navbar: React.FC = () => {
 
   const sendToBackend = async (project: ProjectRequest) => {
     if (!editor) return;
-    const id = sessionStorage.getItem('currentProject');
+    const id = currentProject?.id
     try {
       // Intenta obtener los datos del proyecto usando el método correcto
       // GrapesJS Studio parece usar un método diferente para obtener los datos del proyecto
@@ -162,6 +169,7 @@ const Navbar: React.FC = () => {
 
       if (id){
         await ProjectServices.updateProject(parseInt(id), project, file)
+        setShowConfirmation(true);
         return
       }
       const response = await ProjectServices.createProject(getCurrentUser()!, project, file)

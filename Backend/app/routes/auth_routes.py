@@ -32,7 +32,7 @@ async def login(credentials: LoginRequest, service: AuthService = Depends(get_au
                              user_id=user.id,
                              user_email=user.email)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise e
     
 @router.post("/register")
 async def register(
