@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import useWebSocket, { ReadyState, SendMessage  } from 'react-use-websocket';
-import { useEditor } from './AppContext';
+import { useAppContext } from './AppContext';
 
 interface IWebSocketContext {
     sendMessage: SendMessage;
@@ -16,7 +16,7 @@ const WebSocketContext = createContext<IWebSocketContext | null>(null);
 import { ReactNode } from 'react';
 
 export const WebSocketProvider = ({ children }: { children: ReactNode }) => {
-  const { editor } = useEditor(); 
+  const { editor } = useAppContext(); 
   const [userId] = useState(() => sessionStorage.getItem('user_id'));
   const [userEmail] = useState(() => sessionStorage.getItem('user_email'));
 

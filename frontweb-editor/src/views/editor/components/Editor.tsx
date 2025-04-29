@@ -1,20 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import grapesjs from 'grapesjs';
-import { Editor as GrapesjsEditor } from 'grapesjs';
-import io from 'socket.io-client';
 import 'grapesjs/dist/css/grapes.min.css';
 import { customBlocks } from '../../../constants/CustomBlocks';
 import Navbar from '../../components/Navbar';
-import { AppProvider, useEditor} from '../../../contexts/AppContext';
+import { useAppContext} from '../../../contexts/AppContext';
 import ChatPanel from './ChatPanel';
 import GrapesEditor from './../components/GrapesEditor';
 import { useLocation } from 'react-router-dom';
 import { ProjectServices } from '../../../services/ProjectServices';
 
-
 const Editor: React.FC = () => {
+  const {currentProject} = useAppContext()
   const editorRef = useRef<HTMLDivElement | null>(null);
-  const { editor } = useEditor();
+  const { editor } = useAppContext();
   const location = useLocation();
   const [projectId, setProjectId] = useState<number | null>(null)
   const queryParams = new URLSearchParams(location.search);
@@ -23,8 +21,8 @@ const Editor: React.FC = () => {
   //const socket = useRef(io('http://localhost:3000')); // Conexión a Socket.IO
 
   useEffect(() => {
-
-    const id = queryParams.get('id');
+    console.log('context: ',currentProject)
+    const id = currentProject?.id || 0
     if (id) {
       setProjectId(parseInt(id));
       sessionStorage.setItem('currentProject',id)

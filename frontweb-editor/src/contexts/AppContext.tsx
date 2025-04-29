@@ -37,9 +37,17 @@ interface EditorInstance {
   };
 }
 
+export interface Project {
+  id: string;
+  name: string;
+  description?: string;
+}
+
 interface AppContextType {
   editor: EditorInstance | null;
   setEditor: (editor: EditorInstance | null) => void;
+  currentProject: Project | null;
+  setCurrentProject: (project: Project | null) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -52,11 +60,14 @@ interface AppProviderProps {
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   // Estado para almacenar la instancia del editor
   const [editor, setEditor] = useState<EditorInstance | null>(null);
+  const [currentProject, setCurrentProject] = useState<Project | null>(null);
 
   // Valores que se proporcionarán a través del contexto
   const contextValue: AppContextType = {
     editor,
     setEditor,
+    currentProject,
+    setCurrentProject,
   };
 
   return (
@@ -67,7 +78,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 };
 
 // Hook personalizado para acceder al contexto
-export const useEditor = (): AppContextType => {
+export const useAppContext  = (): AppContextType => {
   const context = useContext(AppContext);
   
   if (context === undefined) {

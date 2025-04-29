@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useEditor } from '../../contexts/AppContext';
+import { useAppContext } from '../../contexts/AppContext';
 import { User } from 'lucide-react';
 import { Settings } from 'lucide-react';
 import { LogOut } from 'lucide-react';
@@ -7,13 +7,12 @@ import { getCurrentUser, logout } from '../../services/LoginServices';
 import { useNavigate } from 'react-router-dom';
 import { ProjectServices } from '../../services/ProjectServices';
 import { ProjectRequest } from '../../interfaces/Project';
-import { Project } from '../../interfaces/Project';
 import ConfirmationModal from '../components/ConfirmationModal';
 import ConfigModal, { ConfigData }  from './ConfigModal';
 
 
 const Navbar: React.FC = () => {
-  const { editor } = useEditor();
+  const { editor, currentProject } = useAppContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -21,7 +20,6 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const [showModalForm, setShowmodalForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false)
-  const [currentProject, setCurrentProject] = useState<Project | null>(null)
   const [showAlert, setShowAlert] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
 
@@ -41,14 +39,11 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log(editor)
-    const idProject = sessionStorage.getItem('currentProject')
-    console.log('current: ', idProject)
+    console.log('context desde el navbar', currentProject)
+    const idProject = currentProject?.id || ''
     if (idProject != null ){
       setIsEditing(true)
-      fetchProject(parseInt(idProject))
       setIsEditing(true)
-      
     }
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -60,12 +55,6 @@ const Navbar: React.FC = () => {
       //console.log('Proyecto actualizado:', currentProject);
     }
   }, [currentProject]);
-
-
-  const fetchProject = async (id:number) => {
-    const project = await ProjectServices.getProjectById(id)
-    setCurrentProject(project)
-  }
 
   const handleExport = async () => {
     if (!editor) return;

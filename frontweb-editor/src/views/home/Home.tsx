@@ -5,10 +5,12 @@ import Navbar from '../components/Navbar';
 import { AppProvider} from './../../contexts/AppContext';
 import { ProjectServices } from '../../services/ProjectServices';
 import { getCurrentUser } from '../../services/LoginServices';
+import { useAppContext } from './../../contexts/AppContext';
 
 
 const Home = () => {
   const projectServices = ProjectServices
+  const { setCurrentProject } = useAppContext();
   //const [showUserMenu, setShowUserMenu] = useState(false);
   const navigate = useNavigate();
   const [proyectos, setProyectos] = useState<any[]>([]);
@@ -46,6 +48,7 @@ const Home = () => {
   const newProject = () => {
     localStorage.removeItem('gjsProject')
     sessionStorage.removeItem('currentProject')
+    setCurrentProject(null)
     navigate('/editor')
   }
   
@@ -57,10 +60,11 @@ const Home = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + proyectos.length) % proyectos.length);
   };
   
-  const editProject = (id:number) => {
-    console.log('cargando el proyecto: ', id)
-    sessionStorage.setItem('currentProject', id.toString())
-    navigate(`/editor?id=${id}`);
+  const editProject = (project:any) => {
+    console.log('cargando el proyecto: ', project.id)
+    sessionStorage.setItem('currentProject', project.id.toString())
+    setCurrentProject(project)
+    navigate(`/editor?id=${project.id}`);
   };
   
   return (
@@ -117,7 +121,7 @@ const Home = () => {
                       Ver Detalles
                     </button>
                     <button 
-                    onClick={() => editProject(proyectos[currentIndex].id)}
+                    onClick={() => editProject(proyectos[currentIndex])}
                     className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition-colors">
                       Editar
                     </button>

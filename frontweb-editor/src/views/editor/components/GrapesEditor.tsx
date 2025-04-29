@@ -1,15 +1,15 @@
 import StudioEditor from '@grapesjs/studio-sdk/react';
 import '@grapesjs/studio-sdk/style';
-import { useEditor } from '../../../contexts/AppContext';
+import { useAppContext } from '../../../contexts/AppContext';
 import { useEffect, useRef } from 'react';
 import { useWebSocketContext } from '../../../contexts/WebSocketContext';
 
 // ...
 const GrapesEditor = () => {
-    const { setEditor } = useEditor();
+    const { setEditor } = useAppContext();
     const socket = useWebSocketContext();
     const isApplyingRemoteUpdate = useRef(false);
-    const { editor } = useEditor();
+    const { editor } = useAppContext();
     const pendingUpdates = useRef<{[id: string]: ReturnType<typeof setTimeout>}>({});
     const lastOperationId = useRef<string | null>(null);
     const currentPageIndex = useRef<number>(0);
