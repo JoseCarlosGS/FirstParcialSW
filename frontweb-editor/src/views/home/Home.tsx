@@ -21,8 +21,13 @@ const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const userId = getCurrentUser();
+
   useEffect(() => {
-    sessionStorage.removeItem('currentProject')
+    setCurrentProject(null)
+    localStorage.removeItem('currentProject')
+  },[])
+
+  useEffect(() => {
     const fetchProjects = async () => {
       try {
         setLoading(true);

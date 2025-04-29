@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { useEffect, createContext, useContext, useState, ReactNode } from 'react';
 
 interface Page {
   get: (property: string) => any;
@@ -58,9 +58,29 @@ interface AppProviderProps {
 
 // Proveedor del contexto
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  // Estado para almacenar la instancia del editor
+ 
   const [editor, setEditor] = useState<EditorInstance | null>(null);
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
+
+  useEffect(() => {
+    const storedProject = localStorage.getItem('currentProject');
+    if (storedProject) {
+      try {
+        setCurrentProject(JSON.parse(storedProject));
+      } catch (error) {
+        console.error('Error al parsear currentProject guardado:', error);
+        localStorage.removeItem('currentProject'); 
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (currentProject) {
+      localStorage.setItem('currentProject', JSON.stringify(currentProject));
+    } else {
+      localStorage.removeItem('currentProject'); // Limpia si se elimina el proyecto actual
+    }
+  }, [currentProject]);
 
   // Valores que se proporcionarán a través del contexto
   const contextValue: AppContextType = {

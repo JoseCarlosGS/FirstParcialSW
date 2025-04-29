@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../../contexts/AppContext';
-import { User } from 'lucide-react';
+import { CheckCircleIcon, User } from 'lucide-react';
 import { Settings } from 'lucide-react';
 import { LogOut } from 'lucide-react';
 import { getCurrentUser, logout } from '../../services/LoginServices';
@@ -9,10 +9,11 @@ import { ProjectServices } from '../../services/ProjectServices';
 import { ProjectRequest } from '../../interfaces/Project';
 import ConfirmationModal from '../components/ConfirmationModal';
 import ConfigModal, { ConfigData }  from './ConfigModal';
+import AlertModal from './AlertModal';
 
 
 const Navbar: React.FC = () => {
-  const { editor, currentProject } = useAppContext();
+  const { editor, currentProject, setCurrentProject } = useAppContext();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,6 +23,7 @@ const Navbar: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [showAlert, setShowAlert] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -39,22 +41,25 @@ const Navbar: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log("project updated", currentProject)
+    if(currentProject) setIsEditing(true)
+  },[currentProject]);
+
+  useEffect(() => {
+    console.log("project editing", isEditing)
+  },[isEditing]);
+
+  useEffect(() => {
     console.log('context desde el navbar', currentProject)
-    const idProject = currentProject?.id || ''
+    const idProject = currentProject?.id
     if (idProject != null ){
-      setIsEditing(true)
+      console.log('cambiando editing a:', isEditing)
       setIsEditing(true)
     }
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  useEffect(() => {
-    if (currentProject) {
-      //console.log('Proyecto actualizado:', currentProject);
-    }
-  }, [currentProject]);
 
   const handleExport = async () => {
     if (!editor) return;
@@ -160,11 +165,15 @@ const Navbar: React.FC = () => {
         return
       }
       const response = await ProjectServices.createProject(getCurrentUser()!, project, file)
-      
-      console.log('Proyecto exportado con éxito', response);
-      return response
+      setCurrentProject(response);
+      console.log(response);
+      console.log(currentProject);
+      setShowConfirmation(true);
     } catch (error) {
       console.error('Error al exportar el proyecto:', error);
+    }finally{
+      setShowmodalForm(false); 
+      
     }
   }
 
@@ -182,11 +191,8 @@ const Navbar: React.FC = () => {
   
     console.log("Datos del proyecto:", { name, description });
 
-    const response = await sendToBackend(project);
-    console.log('respuesta al crear:',response)
-    if (response)
-        sessionStorage.setItem('currentProject', response.data.id_project)
-    setShowmodalForm(false); 
+    await sendToBackend(project);
+
   };
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -247,14 +253,14 @@ const Navbar: React.FC = () => {
     <div className="flex items-center justify-between h-12">
       {/* Izquierda: Logo y menú Proyecto */}
       <div className="flex items-center space-x-3">
-      <a href="#"
+      {editor? (<a href="#"
       onClick={(e) => {
         e.preventDefault(); // evita que recargue o navegue
         setShowAlert(true); // mostramos tu modal
       }}
       > 
-        <div className="text-lg font-semibold text-white">MiDashboard</div>
-      </a>
+        <div className="text-lg font-semibold text-white">MiEditor</div>
+      </a>):(<div className="text-lg font-semibold text-white">MiEditor</div>)}
         <div className="inline-block relative">
           {editor && (<button
             onClick={toggleMenu}
@@ -311,6 +317,9 @@ const Navbar: React.FC = () => {
             onChange={handleImport}
           />
         </div>
+        {editor && (<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <h2 className="text-lg font-semibold">{currentProject?.name || "Nuevo proyecto"}</h2>
+        </div>)}
       </div>
 
       {/* Derecha: Avatar de usuario */}
@@ -320,7 +329,7 @@ const Navbar: React.FC = () => {
           className="flex items-center space-x-2 bg-transparent hover:bg-transparent appearance-none"
         >
           <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-sm font-bold">
-            JD
+            <User size={25} className="" />
           </div>
         </button>
         
@@ -421,6 +430,13 @@ const Navbar: React.FC = () => {
         isOpen={showConfig} 
         onCancel={() => setShowConfig(false)} 
         onSubmit={handleGenerateProject}
+      />
+      <AlertModal 
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        icon={<CheckCircleIcon size={48} />}
+        message="El proyecto se creó exitosamente."
+        confirmText="Entendido"
       />
   </nav>
 

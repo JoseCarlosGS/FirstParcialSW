@@ -19,9 +19,12 @@ const Login: React.FC = () => {
       // Llamar al servicio de autenticación
       await login(email, password);
       // Redirigir al usuario o realizar alguna acción adicional
-      console.log('Inicio de sesión exitoso');
+      //console.log('Inicio de sesión exitoso');
       navigate('/')
     } catch (err: any) {
+      //console.log(err)
+      if (err.status == 401) setError('Credenciales incorrectas')
+      else
       setError(err.message || 'Error al iniciar sesión');
     } finally {
       setLoading(false);
